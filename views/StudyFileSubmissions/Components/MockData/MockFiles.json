@@ -1,0 +1,42 @@
+[
+    {
+        "fileName": "RadxUp_sample_file_name_DICT.csv",
+        "version": "v1",
+        "fileType": "File Data Dictionary",
+        "fileSize": 472241,
+        "pii": "no errors",
+        "data": null,
+        "meta": null,
+        "dict": "no errors"
+    },
+    {
+        "fileName": "RadxUp_sample_file_name_META.json",
+        "version": "v1",
+        "fileType": "File Metadata",
+        "fileSize": 662231,
+        "pii": "no errors",
+        "data": null,
+        "meta": "error",
+        "dict": null
+    },
+    {
+        "fileName": "RadxUp_sample_file_name_data_origcopy_1.csv",
+        "version": "v1",
+        "fileType": "Tabular Data - Original",
+        "fileSize": 5622419,
+        "pii": "no errors",
+        "data": "error",
+        "meta": "error",
+        "dict": "no errors"
+    },
+    {
+        "fileName": "RadxUp_sample_file_name_data_standardized.csv",
+        "version": "v1",
+        "fileType": "Tabular Data - Standardized",
+        "fileSize": 462241,
+        "pii": "error",
+        "data": "no errors",
+        "meta": "error",
+        "dict": "no errors"
+    }
+]

@@ -1,0 +1,104 @@
+[
+    {
+        "studyName": "Lorem Ipsum",
+        "datasets": [
+            {
+                "dataset": "Original Data",
+                "fileName": "orig_data.csv",
+                "fileType": "Tabular Data - Original",
+                "fileFormat": "csv",
+                "fileSize": 562241,
+                "children": [
+                    {
+                        "dataset": "Orig Metadata",
+                        "fileName": "orig_metadata_file.csv",
+                        "fileFormat": "csv",
+                        "fileType": "File Metadata - Original",
+                        "fileSize": 432462
+                    },
+                    {
+                        "dataset": "Orig Dictionary",
+                        "fileName": "orig_dictionary_file.csv",
+                        "fileFormat": "csv",
+                        "fileType": "File Data Dictionary - Original",
+                        "fileSize": 315462
+                    }
+                ]
+            },
+            {
+                "dataset": "Standardized Data",
+                "fileName": "standardized_data.csv",
+                "fileType": "Tabular Data - Standardized",
+                "fileFormat": "csv",
+                "fileSize": 462241,
+                "children": [
+                    {
+                        "dataset": "Standardized Metadata",
+                        "fileName": "standardized_metadata_file.csv",
+                        "fileFormat": "csv",
+                        "fileType": "File Metadata - Standardized",
+                        "fileSize": 332822
+                    },
+                    {
+                        "dataset": "Standardized Dictionary",
+                        "fileName": "standardized_dictionary_file.csv",
+                        "fileFormat": "csv",
+                        "fileType": "File Data Dictionary - Standardized",
+                        "fileSize": 315462
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "studyName": "Dolor Sit Amet",
+        "datasets": [
+            {
+                "dataset": "Original Data",
+                "fileName": "orig_data.csv",
+                "fileType": "Tabular Data - Original",
+                "fileFormat": "csv",
+                "fileSize": 562241,
+                "children": [
+                    {
+                        "dataset": "Orig Metadata",
+                        "fileName": "orig_metadata_file.csv",
+                        "fileFormat": "csv",
+                        "fileType": "File Metadata - Original",
+                        "fileSize": 432462
+                    },
+                    {
+                        "dataset": "Orig Dictionary",
+                        "fileName": "orig_dictionary_file.csv",
+                        "fileFormat": "csv",
+                        "fileType": "File Data Dictionary - Original",
+                        "fileSize": 315462
+                    }
+                ]
+            },
+            {
+                "dataset": "Standardized Data",
+                "fileName": "standardized_data.csv",
+                "fileType": "Tabular Data - Standardized",
+                "fileFormat": "csv",
+                "fileSize": 462241,
+                "children": [
+                    {
+                        "dataset": "Standardized Metadata",
+                        "fileName": "standardized_metadata_file.csv",
+                        "fileFormat": "csv",
+                        "fileType": "File Metadata - Standardized",
+                        "fileSize": 332822
+                    },
+                    {
+                        "dataset": "Standardized Dictionary",
+                        "fileName": "standardized_dictionary_file.csv",
+                        "fileFormat": "csv",
+                        "fileType": "File Data Dictionary - Standardized",
+                        "fileSize": 315462
+                    }
+                ]
+            }
+        ]
+    }
+]

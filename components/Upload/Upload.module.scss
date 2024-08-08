@@ -1,0 +1,26 @@
+@import '../../styles/variables/colors.scss';
+@import '../../styles/fonts.scss';
+
+.fileUpload {
+    display: none;
+}
+
+.uploadButton {
+    background-color: $PrimaryBackground;
+    cursor: pointer;
+    font: $primary-font;
+    color: black;
+    font-size: 25px;
+    padding-top: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 20px;
+    border: solid 1px black;
+}
+
+.uploadButton:hover {
+    background-color: $PrimaryHover;
+    color: white;
+}
+
+

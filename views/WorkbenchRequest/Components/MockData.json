@@ -1,0 +1,22 @@
+[
+    {
+        "id": 10,
+        "name": "John Doe",
+        "email": "johndoe@example.com",
+        "dcc": "RADx-UP",
+        "application": "SAS",
+        "approvalStatus": "Pending",
+        "requestDate": "",
+        "approvalDate": ""
+    },
+    {
+        "id": 9,
+        "name": "John Doe",
+        "email": "johndoe@example.com",
+        "dcc": "RADx-UP",
+        "application": "Data Wrangler",
+        "approvalStatus": "Approved",
+        "requestDate": "",
+        "approvalDate": ""
+    }
+]

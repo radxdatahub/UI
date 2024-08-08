@@ -1,0 +1,31 @@
+[
+    {
+        "studyName": "Lorem Ipsum",
+        "datasets": [
+            {
+                "dataset": "Public Data",
+                "fileName": "public_data.csv",
+                "fileType": "Synthetic",
+                "fileFormat": "csv",
+                "fileSize": 562241,
+                "description": "Lorem ipsum dolor"
+            },
+            {
+                "dataset": "Another Public Data",
+                "fileName": "another_public_data.csv",
+                "fileType": "Synthetic",
+                "fileFormat": "csv",
+                "fileSize": 462241,
+                "description": "Lorem ipsum dolor"
+            },
+            {
+                "dataset": "More Public Data",
+                "fileName": "more_public_data.csv",
+                "fileType": "Synthetic",
+                "fileFormat": "csv",
+                "fileSize": 462241,
+                "description": "Lorem ipsum dolor"
+            }
+        ]
+    }
+]
