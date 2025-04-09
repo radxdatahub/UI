@@ -14,6 +14,7 @@ import Select from '../../../components/Select/Select';
 import Toggle from '../../../components/Toggle/Toggle';
 import useRest from '../../../lib/hooks/useRest';
 import { POST_WORKBENCH_ADDON_REQUEST } from '../../../constants/apiRoutes';
+import { downloadLink } from '../../../lib/pageHelpers/downloadLink';
 import { analyticAddons, workbenchInterests } from '../../../constants/workbenchAddOnCodeLists';
 import Banner from '../../../components/Banner/Banner';
 import { defaultValueGeneratorForMultiSelect } from '../../../lib/componentHelpers/MultiselectFunctions/defaultValueGenerator';
@@ -37,7 +38,7 @@ const AddonRequestForm = (props) => {
     const [downloaded, clickedDownload] = useState(false);
     const [signed, enteredSignature] = useState(false);
     const router = useRouter();
-    const { restPost } = useRest();
+    const { restPost, restGet } = useRest();
     const {
         register,
         handleSubmit,
@@ -99,7 +100,7 @@ const AddonRequestForm = (props) => {
                 </Alert>
             )}
             <form onSubmit={handleSubmit(handleSubmitHelper)}>
-                <Container>
+                <Container className={classes.Container}>
                     <h3 className="mt-3 mb-3">Requestor Information</h3>
                     <Row className={classes.spacer}>
                         <Col>
@@ -241,20 +242,19 @@ const AddonRequestForm = (props) => {
                         {TOS_URL && (
                             <>
                                 <Col lg={{ offset: 1 }}>
-                                    <a href={TOS_URL} download>
-                                        <Button
-                                            type="button"
-                                            size="none"
-                                            iconLeft={<DownloadIcon />}
-                                            label="Download the Terms of Service as PDF [774 KB]"
-                                            ariaLabel="Download and read the Terms of Service to proceed"
-                                            variant="primary"
-                                            className={`mt-4 ${classes.TOS_Button}`}
-                                            handleClick={() => {
-                                                clickedDownload(true);
-                                            }}
-                                        />
-                                    </a>
+                                    <Button
+                                        type="button"
+                                        size="none"
+                                        iconLeft={<DownloadIcon />}
+                                        label="Download the Terms of Service as PDF [774 KB]"
+                                        ariaLabel="Download and read the Terms of Service to proceed"
+                                        variant="primary"
+                                        className={`mt-4 ${classes.TOS_Button}`}
+                                        handleClick={async () => {
+                                            downloadLink(TOS_URL, restGet);
+                                            clickedDownload(true);
+                                        }}
+                                    />
                                 </Col>
                                 <Col lg={1} />
                             </>

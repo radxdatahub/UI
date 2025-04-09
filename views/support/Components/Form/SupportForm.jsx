@@ -144,7 +144,7 @@ const SupportRequestForm = (props) => {
                         <Col>
                             <Input
                                 {...register('institution', {
-                                    required: 'Institution must be selected.',
+                                    required: 'Institution is missing.',
                                 })}
                                 label="Institution"
                                 ariaLabel="institution"

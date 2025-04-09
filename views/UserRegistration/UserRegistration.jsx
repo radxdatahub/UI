@@ -14,10 +14,11 @@ import UserRegistrationForm from './Components/UserRegistrationForm';
  * @property {Array} researcherLevels - Array of all the different researcher levels for a user
  * @property {Object} rasUser - User information coming from Ras when logging in from login.gov - used to pre-populate user registration fields
  * @property {Boolean} checkUser - Boolean to see if user is logged in
+ * @property {Array} referrerTypes - Array of the ways you may have heard of RADx
  */
 
 const UserRegistration = (props) => {
-    const { researcherLevels, approvedInstitution, allStates, allCountries, institutionTypes, rasUser, checkUser } = props;
+    const { researcherLevels, approvedInstitution, allStates, allCountries, institutionTypes, rasUser, checkUser, referrerTypes } = props;
     const router = useRouter();
 
     return (
@@ -31,6 +32,7 @@ const UserRegistration = (props) => {
                 institutionTypes={institutionTypes}
                 rasUser={rasUser}
                 checkUser={checkUser}
+                referrerTypes={referrerTypes}
             />
         </>
     );
@@ -43,6 +45,7 @@ UserRegistration.propTypes = {
     checkUser: PropTypes.bool,
     institutionTypes: PropTypes.arrayOf(PropTypes.object),
     rasUser: PropTypes.object,
+    referrerTypes: PropTypes.arrayOf(PropTypes.object),
     researcherLevels: PropTypes.arrayOf(PropTypes.object),
 };
 

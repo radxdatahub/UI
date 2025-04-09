@@ -41,16 +41,17 @@ const DCCForm = (props) => {
     } = dccStates;
 
     const isValidUrl = (string) => {
-        if (string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (err) {
-                return false;
-            }
-        } else {
-            return true;
-        }
+        // breaking it down by regex as URL was not working
+        const url = new RegExp(
+            '^(https?:\\/\\/)?' + // validate protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])|[a-z\\d])\\.)+[a-z]{2,}|' +
+                '((\\d{1,3}\\.){3}\\d{1,3}))' +
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+                '(\\?[;&a-z\\d%_.~+=-]*)?' +
+                '(\\#[-a-z\\d_]*)?$',
+            'i'
+        );
+        return url.test(string);
     };
 
     return (
@@ -184,7 +185,7 @@ const DCCForm = (props) => {
                                 error={errors.topics_other_specify}
                                 controlId="topics_other_specify"
                                 label="Other Domain, Specify"
-                                placeholder="Add Other Topics one at a time"
+                                placeholder="Add Other Domains one at a time"
                             />
                         </Col>
                         <Col lg={'2'}>
@@ -279,6 +280,22 @@ const DCCForm = (props) => {
 
             <Row className={classes.spacer}>
                 <Col>
+                    <Multiselect
+                        isClearable
+                        control={control}
+                        defaultValue={defaultValueGeneratorForMultiSelect(formData?.study_population_focus)}
+                        required
+                        inline
+                        error={errors.study_population_focus}
+                        validationRules={{ required: 'At least 1 Study Population Focus is required' }}
+                        name="study_population_focus"
+                        controlId="study_population_focus"
+                        label="Study Population Focus"
+                        options={codeListsValues.Study_Focus_Population}
+                    />
+                </Col>
+                <Col lg={1} />
+                <Col>
                     <Row>
                         <Col>
                             <Input
@@ -318,8 +335,6 @@ const DCCForm = (props) => {
                         </Row>
                     )}
                 </Col>
-                <Col lg={1} />
-                <Col />
             </Row>
 
             <Row className={classes.spacer}>
@@ -328,7 +343,7 @@ const DCCForm = (props) => {
                         {...register('CT_URL', {
                             value: formData?.CT_URL,
                             validate: (value) => {
-                                if (!isValidUrl(value)) {
+                                if (!isValidUrl(value) && value.length > 0) {
                                     return "Enter valid Clinical Trials.gov URL in the format: 'http://example.com'";
                                 }
                             },
@@ -347,7 +362,7 @@ const DCCForm = (props) => {
                         {...register('study_website_URL', {
                             value: formData?.study_website_URL,
                             validate: (value) => {
-                                if (!isValidUrl(value)) {
+                                if (!isValidUrl(value) && value.length > 0) {
                                     return "Enter valid Study Website URL in the format: 'http://example.com'";
                                 }
                             },
@@ -365,7 +380,7 @@ const DCCForm = (props) => {
                     <Input
                         {...register('publication_URL', {
                             validate: (value) => {
-                                if (!isValidUrl(value)) {
+                                if (!isValidUrl(value) && value.length > 0) {
                                     return "Enter valid Primary Publication URL  in the format: 'http://example.com'";
                                 }
                             },
@@ -430,6 +445,7 @@ DCCForm.propTypes = {
         setTopics: PropTypes.func,
         sourceOtherSpecify: PropTypes.any,
         topics: PropTypes.array,
+        study_population_focus: PropTypes.any,
     }),
     errors: PropTypes.shape({
         CT_URL: PropTypes.any,
@@ -443,6 +459,7 @@ DCCForm.propTypes = {
         subject: PropTypes.any,
         topics: PropTypes.any,
         topics_other_specify: PropTypes.any,
+        study_population_focus: PropTypes.any,
     }),
     formData: PropTypes.shape({
         CT_URL: PropTypes.string,
@@ -451,6 +468,7 @@ DCCForm.propTypes = {
         studyenddate: PropTypes.string,
         studystartdate: PropTypes.string,
         topics: PropTypes.array,
+        study_population_focus: PropTypes.any,
     }),
     getValues: PropTypes.func,
     register: PropTypes.func,

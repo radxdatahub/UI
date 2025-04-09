@@ -193,6 +193,9 @@
         margin: 0;
         border-bottom: 1px solid #437b83;
         min-width: 1350px;
+        position: static;
+        height: fit-content;
+        padding-top: 0;
     }
 
     .container {
@@ -225,7 +228,8 @@
 }
 
 .codeBlock {
-    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New,
+        monospace, serif;
     background-color: black;
     padding: 2px;
     color: white;

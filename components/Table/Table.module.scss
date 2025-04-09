@@ -272,3 +272,9 @@
     font-size: 18px;
     font-weight: bold;
 }
+
+.narrowPadding {
+    table tr td {
+        padding: 10px 15px;
+    }
+}

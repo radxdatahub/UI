@@ -32,7 +32,7 @@ const LoginModal = (props) => {
                 All users of the NIH Rapid Acceleration of Diagnostics RADx Data Hub (RADx Data Hub) are required to login/sign up using
                 Researcher Auth Service (RAS). To learn more about RAS, visit their{' '}
                 <a
-                    href="https://datascience.nih.gov/researcher-auth-service-initiative"
+                    href=""
                     className={classes.altLink}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -61,9 +61,7 @@ const LoginModal = (props) => {
     const footerComp = (
         <>
             <span>Need help?</span>
-            <a href="mailto:RADx-DataHub@nih.gov" className={classes.link}>
                 Contact the support team
-            </a>
         </>
     );
 

@@ -3,6 +3,7 @@ import logger from '../../../lib/logger';
 import { GET_ALL_SUPPORT_REQUEST, GET_INTERNAL_SUPPORT_REQUEST_REPORT } from '../../../constants/apiRoutes';
 import axios from 'axios';
 import InternalDashboard from '../../../views/Internal/InternalDashboard';
+import Cookies from 'js-cookie';
 
 const InternalDashboardPage = (props) => <InternalDashboard {...props} />;
 
@@ -22,7 +23,16 @@ export async function getServerSideProps(context) {
         getSupportTracker = getSupportDashboardResponse.data;
     } catch (e) {
         logger.error(`Error with GET_ALL_SUPPORT_REQUEST: ${e?.response?.data?.message || e?.response?.data?.detail || e}`);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            if (e?.response?.status === 401) {
+                Cookies.remove('chocolateChip');
+            }
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -34,7 +44,8 @@ export async function getServerSideProps(context) {
     return {
         props: {
             getSupportTracker,
-            downloadCSV: `${baseUrl}${GET_INTERNAL_SUPPORT_REQUEST_REPORT}`
+            downloadCSV: `${baseUrl}${GET_INTERNAL_SUPPORT_REQUEST_REPORT}`,
+            pageTitle: 'Support Requests Dashboard'
         },
     };
 }

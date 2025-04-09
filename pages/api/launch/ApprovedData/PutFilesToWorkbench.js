@@ -11,7 +11,7 @@ export default async (req, res) => {
         await BaseMiddleware(req, res);
         const {
             body,
-            query: { sasFiles, dataFiles },
+            query: { sasFiles, dataFiles, studyId },
         } = req;
 
         let putFilesToWorkbenchResponse = {};
@@ -23,7 +23,7 @@ export default async (req, res) => {
                 res.status(404).end();
                 break;
             case 'PUT':
-                putFilesToWorkbenchResponse = await axios.put(PUT_TO_WORKBENCH.replace('[sasFileIDs]', sasFiles).replace('[dataFileIDs]', dataFiles), body, {
+                putFilesToWorkbenchResponse = await axios.put(PUT_TO_WORKBENCH.replace('[sasFileIDs]', sasFiles).replace('[dataFileIDs]', dataFiles).replace('[studyId]', studyId), body, {
                     withCredentials: true,
                     headers: { Cookie: req.headers.cookie },
                 });

@@ -14,7 +14,7 @@ import ApprovedPublicDataTable from '../../components/Table/ApprovedPublicDataTa
 import classes from './ApprovedData.module.scss';
 import { getFileSize } from '../../lib/componentHelpers/TableFunctions/getFileSize';
 import NoticeBox from '../../components/NoticeBox/NoticeBox';
-import { WORKBENCH_LINK, GET_RESOURCE_CENTER_BUCKET } from '../../constants/apiRoutes';
+import { WORKBENCH_LINK } from '../../constants/apiRoutes';
 
 /**
  * Approved Data Page
@@ -120,6 +120,7 @@ const ApprovedData = (props) => {
                         noHover
                         allowSort
                         baseUrl={baseUrl}
+                        studyId={study.studyId}
                     ></ApprovedPublicDataTable>
                 </div>
             </div>
@@ -161,12 +162,10 @@ const ApprovedData = (props) => {
                                     </div>
                                     <div>
                                         For more guidance on applying for add-ons, downloading files, and transferring files to the
-                                        workbench, please refer to the{' '}
-                                        <a href={`/tutorial?tutorial=approvedData`}>RADx Data Hub User Tutorial.</a>
+                                        workbench, please refer to the tutorial
                                     </div>
                                     <div>
-                                        For more guidance on using our tools offerings within the Analytics Workbench, please refer to the{' '}
-                                        <a href={`/workbenchTutorial`}>Workbench User Tutorial.</a>
+                                        For more guidance on using our tools offerings within the Analytics Workbench, please refer to the tutorial
                                     </div>
                                 </div>
                             }
@@ -181,14 +180,7 @@ const ApprovedData = (props) => {
                     body={
                         <div>
                             You do not have any approved data. To access features on this page as well as the Analytics Workbench, you must
-                            first{' '}
-                            <a
-                                href="https://sharing.nih.gov/accessing-data/accessing-genomic-data/how-to-request-and-access-datasets-from-dbgap"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                receive access
-                            </a>{' '}
+                            first receive access
                             for one study in dbGaP. After you receive access, return to this page using the same eRA or NIH Login that you
                             use to log into to dbGaP. ​
                         </div>

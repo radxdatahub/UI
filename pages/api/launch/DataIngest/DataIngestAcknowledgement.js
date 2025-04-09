@@ -16,7 +16,7 @@ export default async (req, res) => {
                 break;
             case 'POST':
                 logger.info(`post request for acknowledgements from validation in data ingest form`);
-                acknowledgementResponse = await axios.post(POST_DI_ACKNOWLEDGEMENT, body, {
+                acknowledgementResponse = await axios.post(`${POST_DI_ACKNOWLEDGEMENT}${body.submit}`, body, {
                     withCredentials: true,
                     headers: { Cookie: req.headers.cookie },
                 });

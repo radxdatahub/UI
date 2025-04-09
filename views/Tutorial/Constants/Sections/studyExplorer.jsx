@@ -209,13 +209,8 @@ export const studyExplorer = {
                         the filter pane. To remove all filters, press “Reset Search” above the filter pane.
                     </p>
                     <i>Note: The numbers to the right of the filter values represent the number of results a selected value will return.</i>
-                    <p className={classes.tutorialListItem}>
-                        If you are still unable to find what you need, read the{' '}
-                        <a target="_blank" rel="noopener noreferrer" href="/tutorial?tutorial=advancedSearch">
-                            Advanced Search Tutorial
-                        </a>{' '}
-                        to learn more search techniques.
-                    </p>
+                    <br />
+                    <br />
                     <div className={classes.tutorialImg}>
                         <Image src={figure6StudyExplorer} alt="Figure 6: Filter Box" />
                     </div>

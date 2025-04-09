@@ -19,6 +19,7 @@ export async function getServerSideProps(context) {
         props: {
             category,
             baseUrl,
+            pageTitle: 'Resource Center',
         },
     };
 }

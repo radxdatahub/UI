@@ -1,3 +1,5 @@
+import classes from '../StudyOverview.module.scss';
+
 // Concatenate values of duplicate properties to form new list
 export const combineDuplicates = (data) => {
     const newDataList = [];
@@ -16,7 +18,7 @@ export const combineDuplicates = (data) => {
 };
 
 // List of properties that may contain a URL
-const mayContainURL = ['RAPIDS Link', 'Study Website URL', 'ClinicalTrials.gov URL', 'Publication URL'];
+const mayContainURL = ['Study Website URL', 'URL', 'Publication URL'];
 
 // Check if string is a valid URL
 const isValidUrl = (string) => {
@@ -67,7 +69,7 @@ export const renderList = (data) => {
                 <p key={label}>
                     <b>{label}:</b>{' '}
                     <a
-                        href={`https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=${propertyValue[0]}.v1.p1`}
+                        href=""
                         target="_blank"
                         rel="noopener noreferrer"
                     >

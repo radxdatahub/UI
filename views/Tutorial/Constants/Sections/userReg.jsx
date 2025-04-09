@@ -18,7 +18,7 @@ export const userReg = {
                 <>
                     <p>
                         To create a RADx Data Hub account, you will first need a{' '}
-                        <a target="_blank" rel="noopener noreferrer" href="https://datascience.nih.gov/researcher-auth-service-initiative">
+                        <a target="_blank" rel="noopener noreferrer" href="">
                             Researcher Auth Service
                         </a>{' '}
                         (RAS) Identity Provider (IdP) account, specifically an {/* eslint-disable-next-line max-len */}
@@ -26,7 +26,7 @@ export const userReg = {
                             target="_blank"
                             rel="noopener noreferrer"
                             // eslint-disable-next-line max-len
-                            href="https://auth.nih.gov/CertAuthV3/forms/erapivamswexemptMFADOC.aspx?TYPE=33554433&REALMOID=06-b66e745d-53f5-49b3-a3c5-32e7c9d5d6c5&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=nihwamwebagent&TARGET=-SM-HTTPS%3a%2f%2fauth%2enih%2egov%2feRA%2fredirectorexternal%2easp%3ftarget%3dhttps%3a%2f%2fpublic%2eera%2enih%2egov%3a443%2fcommons"
+                            href=""
                         >
                             NIH Login
                         </a>{' '}
@@ -35,7 +35,7 @@ export const userReg = {
                             target="_blank"
                             rel="noopener noreferrer"
                             // eslint-disable-next-line max-len
-                            href="https://public.era.nih.gov/commonsplus/public/login.era?TARGET=https%3A%2F%2Fpublic.era.nih.gov%3A443%2Fxtract%2FxTractHome.era%3Fmenu_itemPath%3D613"
+                            href=""
                         >
                             eRA Commons
                         </a>{' '}
@@ -127,9 +127,6 @@ export const userReg = {
                             after correctly entering your credentials.
                         </li>
                     </ol>
-                    <i>
-                        Note: If you have a login.gov account linked to an NIH Login or eRA account used for dbGaP, you may use that to login.
-                    </i>
                 </>
             ),
             subSections: [],

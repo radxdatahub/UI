@@ -174,7 +174,7 @@ const overviewIntro = {
         },
         {
             name: 'The Features of the RADx Data Hub',
-            id: '#radx-features',
+            id: '#features',
         },
     ],
 };
@@ -293,14 +293,38 @@ const sasViya = {
     ],
 };
 
+const requestingDataAccess = {
+    main: 'requestingDataAccess',
+    mainTitle: 'Request Data Access',
+    dropdown: [
+        {
+            name: 'Requirements',
+            id: '#requirements-ra',
+        },
+        {
+            name: 'Requesting Access to Studies',
+            id: '#requesting-ra',
+        },
+        {
+            name: 'Adding Downloaders',
+            id: '#downloaders-ra',
+        },
+        {
+            name: 'Study Overview - Request Access to Studies',
+            id: '#overview-ra',
+        },
+    ],
+};
+
 const sidebarOptions = [];
 sidebarOptions.push(overviewIntro);
 sidebarOptions.push(studyExplorer);
-sidebarOptions.push(advancedSearch);
+// sidebarOptions.push(advancedSearch);
 sidebarOptions.push(studyOverview);
 sidebarOptions.push(variablesCatalog);
 sidebarOptions.push(userSupport);
 sidebarOptions.push(userReg);
+sidebarOptions.push(requestingDataAccess);
 sidebarOptions.push(approvedData);
 sidebarOptions.push(publicData);
 

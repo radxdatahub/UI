@@ -10,14 +10,15 @@ import _ from 'lodash';
  * @property {Array(Objects)} menuItems - array of items to be listed in the dropdown when button clicked
  * @property {String} label - The label for the button
  * @property {Component} customComponent - if we want a menuitem to be a custom component we pass it here
+ * @property {Boolean} [disabled=false] - if we want to disable the toggle
  * @returns {JSX} DropdownButton Component
  */
 
 const DropdownButton = (props) => {
-    const { label, menuItems } = props;
+    const { label, menuItems, disabled } = props;
     return (
         <Dropdown>
-            <Dropdown.Toggle id="dropdown-basic" className={classes.dropdownButton}>
+            <Dropdown.Toggle id="dropdown-basic" className={classes.dropdownButton} disabled={disabled}>
                 {label}
             </Dropdown.Toggle>
 
@@ -32,7 +33,12 @@ const DropdownButton = (props) => {
     );
 };
 
+DropdownButton.defaultProps = {
+    disabled: false,
+};
+
 DropdownButton.propTypes = {
+    disabled: PropTypes.bool,
     label: PropTypes.string,
     menuItems: PropTypes.arrayOf(
         PropTypes.shape({

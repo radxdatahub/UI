@@ -39,6 +39,7 @@ export async function getServerSideProps(context) {
             allData,
             date,
             baseUrl,
+            pageTitle: 'Variables Catalog',
         },
     };
 }

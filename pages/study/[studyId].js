@@ -25,6 +25,19 @@ export async function getServerSideProps(context) {
         studyData = searchResponse.data;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/?e=${e?.response?.status}`,
+                },
+            };
+        }
     }
 
     // GET Study Documents
@@ -39,6 +52,19 @@ export async function getServerSideProps(context) {
         studyDocuments = searchResponse.data;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/?e=${e?.response?.status}`,
+                },
+            };
+        }
     }
 
     // GET Study Datasets
@@ -53,6 +79,19 @@ export async function getServerSideProps(context) {
         studyDatasets = searchResponse.data;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/?e=${e?.response?.status}`,
+                },
+            };
+        }
     }
 
     return {
@@ -62,6 +101,7 @@ export async function getServerSideProps(context) {
             studyDocuments,
             studyDatasets,
             baseUrl,
+            pageTitle: 'Study Overview'
         },
     };
 }

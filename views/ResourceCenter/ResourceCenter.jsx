@@ -6,6 +6,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { useRouter } from 'next/router';
+import useRest from '../../lib/hooks/useRest';
 import ExternalIcon from '../../components/Images/svg/ExternalIcon';
 import Banner from '../../components/Banner/Banner';
 import Card from '../../components/Card/Card';
@@ -28,13 +29,14 @@ const ResourceCenter = (props) => {
     const { category, baseUrl } = props;
     const [keySearch, setKeySearch] = useState('');
     const router = useRouter();
+    const { restGet } = useRest();
 
     const allCards = (router, baseUrl) => {
         return [
-            ...generalCards(router, baseUrl),
-            ...forResearchersCards(router, baseUrl),
-            ...forSubmittersCards(router, baseUrl),
-            ...externalLinksCards(router, baseUrl),
+            ...generalCards(router, baseUrl, restGet),
+            ...forResearchersCards(router, baseUrl, restGet),
+            ...forSubmittersCards(router, baseUrl, restGet),
+            ...externalLinksCards(router, baseUrl, restGet),
         ];
     };
 
@@ -115,8 +117,8 @@ const ResourceCenter = (props) => {
             break;
     }
 
-    const renderCards = (cards, router, baseUrl) => {
-        return cards(router, baseUrl)
+    const renderCards = (cards, router, baseUrl, restGet) => {
+        return cards(router, baseUrl, restGet)
             .filter(
                 (c) =>
                     c.children.props.children.props.children.toLowerCase().includes(keySearch) ||
@@ -216,23 +218,23 @@ const ResourceCenter = (props) => {
                 >
                     <Tab eventKey="all" title={tabLabels.all}>
                         {searchBar}
-                        <Row className={classes.Row}>{renderCards(allCards, router, baseUrl)}</Row>
+                        <Row className={classes.Row}>{renderCards(allCards, router, baseUrl, restGet)}</Row>
                     </Tab>
                     <Tab eventKey="general" title={tabLabels.general}>
                         {searchBar}
-                        <Row className={classes.Row}>{renderCards(generalCards, router, baseUrl)}</Row>
+                        <Row className={classes.Row}>{renderCards(generalCards, router, baseUrl, restGet)}</Row>
                     </Tab>
                     <Tab eventKey="forResearchers" title={tabLabels.forResearchers}>
                         {searchBar}
-                        <Row className={classes.Row}>{renderCards(forResearchersCards, router, baseUrl)}</Row>
+                        <Row className={classes.Row}>{renderCards(forResearchersCards, router, baseUrl, restGet)}</Row>
                     </Tab>
                     <Tab eventKey="forSubmitters" title={tabLabels.forSubmitters}>
                         {searchBar}
-                        <Row className={classes.Row}>{renderCards(forSubmittersCards, router, baseUrl)}</Row>
+                        <Row className={classes.Row}>{renderCards(forSubmittersCards, router, baseUrl, restGet)}</Row>
                     </Tab>
                     <Tab eventKey="externalLinks" title={tabLabels.externalLinks}>
                         {searchBar}
-                        <Row className={classes.Row}>{renderCards(externalLinksCards, router, baseUrl)}</Row>
+                        <Row className={classes.Row}>{renderCards(externalLinksCards, router, baseUrl, restGet)}</Row>
                     </Tab>
                 </Tabs>
             </Container>

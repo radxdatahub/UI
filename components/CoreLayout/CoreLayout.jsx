@@ -20,6 +20,8 @@ import { useIdleTimer } from 'react-idle-timer';
 import { REFRESH_TOKEN, LOGOUT } from '../../constants/apiRoutes';
 import useRest from '../../lib/hooks/useRest';
 import { setUser } from '../../store/user/userSlice';
+import UserProfileModal from '../../views/UserProfile/UserProfileModal';
+import Link from 'next/link';
 
 /**
  * The base component for every page. The page's actual content is a child of this.
@@ -40,6 +42,21 @@ const CoreLayout = (props) => {
     if (cookie !== 'undefined' && cookie !== undefined) {
         GetUserProfile(props.userProfile, user);
     }
+
+    // Edit User Profile modal will open if a returning 1.0 user returns and does not have the required fields
+    const [userProfileVisible, setUserProfileVisible] = useState(false);
+
+    useEffect(() => {
+        if (cookie !== 'undefined' && cookie !== undefined && user && !router.pathname.startsWith('/postAuth')) {
+            if (!user.researcherLevel || !user.jobTitle || !user.institution) {
+                setUserProfileVisible(true);
+            }
+        }
+    }, [user]);
+
+    const closeUserProfileModal = () => {
+        setUserProfileVisible(false);
+    };
 
     /**
      * Idle Timer
@@ -167,16 +184,17 @@ const CoreLayout = (props) => {
                 { name: 'Resource Center', link: '/resourceCenter' },
                 { name: 'FAQs', link: '/faq' },
                 { name: 'User Tutorial', link: '/tutorial' },
+                { name: 'Events', link: '/events' },
+                { name: 'Funding Opportunities', link: '/fundingOpportunities' },
             ],
         },
-        { name: 'Contact Us', link: '/support' },
+        { name: 'Contact Us', link: '/contactUs' },
         {
             name: 'About',
             dropdown: [
                 { name: 'Overview', link: '/about' },
-                { name: 'News', link: '/news' },
-                { name: 'Events', link: '/events' },
-                { name: 'Funding Opportunities', link: '/fundingOpportunities' },
+                { name: 'Latest News & Updates', link: '/news' },
+                { name: 'Newsletters', link: '/newsletters' },
             ],
         },
     ];
@@ -210,8 +228,9 @@ const CoreLayout = (props) => {
     return (
         <div className={`${classes.coreLayout} ${noHexBkgd ? `${classes.noHexBkgd}` : ''}`}>
             <Head>
-                <title>NIH RADx Data Hub</title>
+                <title>{props.pageTitle ? `Hub - ${props.pageTitle}` : `Hub`}</title>
             </Head>
+            <a href="#main" className={classes.skipLink} >Skip to main content</a>
             <div className={classes.container}>
                 {notifications &&
                 notifications.map((notification) => {
@@ -243,10 +262,17 @@ const CoreLayout = (props) => {
                 })}
                 <PageHeader {...props.children.props} userProfile={user} />
                 <NavBar tabList={NavParams} path={router.asPath} />
-                {props.children /* actual contents of page */}
+                <main id="main">
+                    {props.children /* actual contents of page */}
+                </main>
                 <Loading />
                 <Footer useColorfulVariant={useColorfulFooter} siteUrl={props.siteUrl}/>
                 <SessionModal visible={sessionModalVisible} closeModal={closeModal} remainingTime={remaining} handleStillHere={handleStillHere} onIdle={onIdle}/>
+                <UserProfileModal
+                    visible={userProfileVisible}
+                    closeModal={closeUserProfileModal}
+                    userId={user?.id}
+                />
             </div>
         </div>
     );
@@ -254,6 +280,7 @@ const CoreLayout = (props) => {
 
 CoreLayout.propTypes = {
     children: PropTypes.node.isRequired,
+    pageTitle: PropTypes.string,
 };
 
 export default CoreLayout;

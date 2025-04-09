@@ -90,7 +90,8 @@ const Table = (props) => {
 
     // placeholder for potential future functionality
     switch (variant) {
-        case 'lite':
+        case 'narrow':
+            tableClass += ` ${classes.narrowPadding} ${classes.container}`;
             break;
         case 'full':
             break;
@@ -139,8 +140,18 @@ const Table = (props) => {
                                             }}
                                         >
                                             {allowSort ? (
-                                                <div className={classes.row}>
-                                                    <div className={`${classes.sortTextHeader} ${classes.textHeader}`}>
+                                                <div
+                                                    className={`${classes.row} ${
+                                                        header.column.columnDef.removeSort && !header.column.columnDef.alignLeft
+                                                            ? 'justify-content-center'
+                                                            : ''
+                                                    }`}
+                                                >
+                                                    <div
+                                                        className={`${classes.textHeader} ${
+                                                            header.column.columnDef.removeSort ? '' : `${classes.sortTextHeader}`
+                                                        }`}
+                                                    >
                                                         {flexRender(header.column.columnDef.header, header.getContext())}
                                                         {header.column.columnDef.tooltip && (
                                                             <Tooltip
@@ -154,14 +165,24 @@ const Table = (props) => {
                                                             </Tooltip>
                                                         )}
                                                     </div>
-                                                    <div className={`${classes.sortHeader}`}>
-                                                        {allowSort && !header.column.columnDef.removeSort
-                                                            ? {
-                                                                  asc: <SortIcon asc={true} />,
-                                                                  desc: <SortIcon asc={false} />,
-                                                              }[header.column.getIsSorted()] ?? <SortIcon unSorted={true} />
-                                                            : null}
-                                                    </div>
+                                                    {!header.column.columnDef.removeSort
+                                                        ? {
+                                                              asc: (
+                                                                  <div className={`${classes.sortHeader}`}>
+                                                                      <SortIcon asc={true} />
+                                                                  </div>
+                                                              ),
+                                                              desc: (
+                                                                  <div className={`${classes.sortHeader}`}>
+                                                                      <SortIcon asc={false} />
+                                                                  </div>
+                                                              ),
+                                                          }[header.column.getIsSorted()] ?? (
+                                                              <div className={`${classes.sortHeader}`}>
+                                                                  <SortIcon unSorted={true} />
+                                                              </div>
+                                                          )
+                                                        : null}
                                                 </div>
                                             ) : (
                                                 <div className={classes.textHeader}>
@@ -257,7 +278,7 @@ Table.propTypes = {
     ).isRequired,
     tableRows: PropTypes.arrayOf(PropTypes.object).isRequired,
     totalRow: PropTypes.array,
-    variant: PropTypes.oneOf(['lite', 'full', 'dataIngest']),
+    variant: PropTypes.oneOf(['narrow', 'full', 'dataIngest']),
 };
 
 export default Table;

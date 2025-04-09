@@ -10,11 +10,12 @@ import { InfoCircle } from 'react-bootstrap-icons';
  * @property {String} variant - The variant of the SFTP modal we want
  * @property {String} title - The title of the modal
  * @property {String} fileUploadSOP - The URL for the File Upload SOP.
+ * @property {String} sftpKey - The SFTP Key for this particular study
  * @returns {JSX} ErrorModalTable component
  */
 
 const SftpModal = (props) => {
-    const { variant, title, fileUploadSOP } = props;
+    const { variant, title, fileUploadSOP, sftpKey } = props;
     const [openSftpModal, setOpenSftpModal] = useState(false);
 
     const content = (
@@ -32,6 +33,7 @@ const SftpModal = (props) => {
                 </a>
                 .
             </p>
+            <p className={classes.textContent}>The SFTP Key for this study is: <b>{sftpKey}</b></p>
         </>
     );
 
@@ -82,6 +84,7 @@ SftpModal.defaultProps = {
 
 SftpModal.propTypes = {
     fileUploadSOP: PropTypes.string,
+    sftpKey: PropTypes.string,
     title: PropTypes.string,
     variant: PropTypes.oneOf(['single', 'multi']),
 };

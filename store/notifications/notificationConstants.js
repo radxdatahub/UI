@@ -12,9 +12,8 @@ export const BaseNotification = {
 };
 
 export const ErrorMessage = {
-    400: 'To access this information, please log in using your RAS credentials.',
-    401: 'Your current session has expired. To continue using features, such as My Approved Data and the Analytics Workbench, please log in with your RAS credentials.',
+    400: `Bad Request - Request could not be completed. If needed, please contact the Support Team by using the 'Contact Us' link in the navigation bar.`,
+    401: 'You are not authorized to access this page. To access, please log in.',
     // eslint-disable-next-line max-len
-    403: `You do not have the right permissions to access this resource. If you believe you need to change your permissions, please contact the RADx Data Hub Support Team by using the 'Contact Us' link in the navigation bar.`,
-    500: 'Your request failed due to a system error. Please try again. If you continue to experience problems, please reach out to the RADx Data Hub Support Team.',
+    403: `You do not have the correct permissions to access this page. If you believe you need to change your permissions, please contact the Support Team by using the 'Contact Us' link in the navigation bar.`,
 };

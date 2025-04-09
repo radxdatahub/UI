@@ -3,6 +3,7 @@ import Modal from '../../../components/Modal/Modal';
 import classes from '../DataIngest.module.scss';
 import ErrorModalContent from './ErrorModalContent';
 import { GET_DOWNLOAD_BY_FILE } from '../../../constants/apiRoutes';
+import { downloadLink } from '../../../lib/pageHelpers/downloadLink';
 import PropTypes from 'prop-types';
 import DownloadIcon from '../../../components/Images/svg/DownloadIcon';
 
@@ -17,11 +18,12 @@ import DownloadIcon from '../../../components/Images/svg/DownloadIcon';
  * @property {Number} errorCount - Total number of errors (missing header count + content errors)
  * @property {Number} fileId - the ID of the file we are looking at validation warnings for
  * @property {String} baseUrl - base url for downloading validation report
+ * @property {Function} restGet - REST API used for download
  * @returns {JSX} ValidationErrorModal component
  */
 
 const ValidationErrorModal = (props) => {
-    const { cdeErrors, metaErrors, piiErrors, dictErrors, missingHeaders, errorCount, fileId, baseUrl } = props;
+    const { cdeErrors, metaErrors, piiErrors, dictErrors, missingHeaders, errorCount, fileId, baseUrl, restGet } = props;
     const [openErrorModal, setOpenErrorModal] = useState(false);
     const bodyComp = (
         <div>
@@ -38,19 +40,13 @@ const ValidationErrorModal = (props) => {
 
     const openButtonLabel = <u>{`View ${errorCount} Warning(s)`}</u>;
     const closeButtonLabel = (
-        <a
-            href={`${baseUrl}${GET_DOWNLOAD_BY_FILE}${fileId}`}
-            download
-            className={classes.downloadButton}
-        >
+        <>
             <DownloadIcon /> Download Report
-        </a>
+        </>
     );
     const modalTitle = (
         <div>
-            <span>
-                Warning Report
-            </span>
+            <span>Warning Report</span>
         </div>
     );
 
@@ -62,7 +58,10 @@ const ValidationErrorModal = (props) => {
                 openButtonSize="medium"
                 openButtonStyle={classes.errorCount}
                 closeButtonStyle={classes.downloadButton}
-                handlePrimaryAction={() => setOpenErrorModal(!openErrorModal)}
+                handlePrimaryAction={async () => {
+                    downloadLink(`${baseUrl}${GET_DOWNLOAD_BY_FILE}${fileId}`, restGet);
+                    setOpenErrorModal(!openErrorModal);
+                }}
                 title={modalTitle}
                 backdrop={true}
                 size="lg"
@@ -85,7 +84,7 @@ ValidationErrorModal.propTypes = {
                 lineNumber: PropTypes.number,
                 solution: PropTypes.string,
             })
-        )
+        ),
     }),
     dictErrors: PropTypes.shape({
         key: PropTypes.arrayOf(
@@ -95,7 +94,7 @@ ValidationErrorModal.propTypes = {
                 lineNumber: PropTypes.number,
                 solution: PropTypes.string,
             })
-        )
+        ),
     }),
     errorCount: PropTypes.number,
     fileId: PropTypes.number,
@@ -107,7 +106,7 @@ ValidationErrorModal.propTypes = {
                 lineNumber: PropTypes.number,
                 solution: PropTypes.string,
             })
-        )
+        ),
     }),
     missingHeaders: PropTypes.arrayOf(PropTypes.string),
     piiErrors: PropTypes.shape({
@@ -118,8 +117,9 @@ ValidationErrorModal.propTypes = {
                 lineNumber: PropTypes.number,
                 solution: PropTypes.string,
             })
-        )
+        ),
     }),
+    restGet: PropTypes.func,
 };
 
 export default ValidationErrorModal;

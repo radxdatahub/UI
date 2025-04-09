@@ -76,6 +76,20 @@
     margin-left: auto;
 }
 
+.variablesLink {
+    color: #2c74b3;
+    background: none;
+    font-weight: 600;
+    text-decoration: underline;
+    padding: 0;
+
+    &:hover,
+    &:focus {
+        color: #003d73;
+        background: none;
+    }
+}
+
 @media (max-width: 991px) {
     .container {
         flex-wrap: wrap !important;

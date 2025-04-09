@@ -3,6 +3,7 @@ import logger from '../../../lib/logger';
 import StudyRegistrationEdit from '../../../views/StudyRegistration/StudyEdit/StudyRegistrationEdit';
 import axios from 'axios';
 import { DOWNLOAD_STUDY_REG_PDF, GET_CODELISTS, GET_STUDY_VALUES } from '../../../constants/apiRoutes';
+import Cookies from 'js-cookie';
 
 const StudyRegistrationEditPage = (props) => <StudyRegistrationEdit {...props} />;
 
@@ -23,7 +24,16 @@ export async function getServerSideProps(context) {
         studyInfo = studyDataResponse.data;
     } catch (e) {
         logger.error(`GET_STUDY_VALUES call failed for study ${studyId}: ${e?.response?.data?.message || e?.response?.data?.detail || e}`);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            if (e?.response?.status === 401) {
+                Cookies.remove('chocolateChip');
+            }
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -42,6 +52,19 @@ export async function getServerSideProps(context) {
         codeLists = codeListResponse.data;
     } catch (e) {
         logger.error(`Get Codelists call failed: ${e?.response?.data?.message || e?.response?.data?.detail || e}`);
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/?e=${e?.response?.status}`,
+                },
+            };
+        }
     }
 
     const codeListsValues = {};
@@ -70,7 +93,14 @@ export async function getServerSideProps(context) {
     }
 
     return {
-        props: { type: 'Curator', studyInfo, formData, codeListsValues, PDF_URL: DOWNLOAD_STUDY_REG_PDF.replace('[studyId]', studyId) },
+        props: {
+            type: 'Curator',
+            studyInfo,
+            formData,
+            codeListsValues,
+            PDF_URL: DOWNLOAD_STUDY_REG_PDF.replace('[studyId]', studyId),
+            pageTitle: 'Study Registration'
+        },
     };
 }
 

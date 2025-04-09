@@ -1,6 +1,9 @@
 import classes from '../Faq.module.scss';
+import { GET_RESOURCE_CENTER_BUCKET } from '../../../constants/apiRoutes';
+import { downloadLink } from '../../../lib/pageHelpers/downloadLink';
+import { sendGAEvent } from '@next/third-parties/google';
 
-export const contentArray = [
+export const contentArray = (baseUrl, restGet) => [
     {
         title: 'General',
         id: 'general',
@@ -26,9 +29,8 @@ export const contentArray = [
                     <>
                         <span>
                             The RADx Data Hub accepts RADx programs’ (RADx-UP, RADx-rad, RADx-Tech, and RADx-DHT) data. If you are not
-                            affiliated with these programs but would like to submit studies or data, please contact
+                            affiliated with these programs but would like to submit studies or data, please contact us.
                         </span>
-                        <a href="mailto:RADx-DataHub@nih.gov">{` RADx-DataHub@nih.gov`}</a>
                         <span>.</span>
                     </>
                 ),
@@ -47,12 +49,8 @@ export const contentArray = [
                         <div style={{ marginBottom: '35px' }}>
                             <span>
                                 To gain study-level access to original and transformed data files, you will need to create an account for
-                                the RADx Data Hub using your
+                                the RADx Data Hub using your account
                             </span>
-                            <a href="https://public.era.nih.gov/commonsplus/public/login.era?TARGET=https%3A%2F%2Fpublic.era.nih.gov%3A443%2Fxtract%2FxTractHome.era%3Fmenu_itemPath%3D613">{` eRA Commons `}</a>
-                            <span>or</span>
-                            <a href="https://auth.nih.gov/CertAuthV3/forms/erapivamswexemptMFADOC.aspx?TYPE=33554433&REALMOID=06-b66e745d-53f5-49b3-a3c5-32e7c9d5d6c5&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=nihwamwebagent&TARGET=-SM-HTTPS%3a%2f%2fauth%2enih%2egov%2feRA%2fredirectorexternal%2easp%3ftarget%3dhttps%3a%2f%2fpublic%2eera%2enih%2egov%3a443%2fcommons">{` NIH Login `}</a>
-                            <span>account. </span>
                             <span>
                                 Once you have registered, sign into dbGAP with the same account and request access to a study. After you’ve
                                 been granted access, the study and its associated data files will appear in the ‘My Approved Data’ tab where
@@ -63,13 +61,7 @@ export const contentArray = [
                             <span>For more in-depth instructions on how to create an account for the RADx Data Hub, see the tutorial.</span>
                         </div>
                         <div className={classes.break}>
-                            <span>To learn how to create an eRA Commons account, visit eRA’s page on</span>
-                            <a href="https://www.era.nih.gov/register-accounts/register-in-era-commons.htm">{` how to register.`}</a>
-                        </div>
-                        <div>
-                            <span>If you have an NIH smart card and are having trouble with it, please visit the</span>
-                            <a href="https://auth.nih.gov/CertAuthV3/forms/passwordlinks.html">{` RAS Login Help `}</a>
-                            <span>page.</span>
+                            <span>To learn how to create an account refer to the tutorial</span>
                         </div>
                     </>
                 ),
@@ -80,24 +72,13 @@ export const contentArray = [
                 body: (
                     <>
                         <div className={classes.break}>
-                            <span>The RADx Data Hub does not manage passwords, but instead, uses</span>
-                            <a href="https://public.era.nih.gov/commonsplus/public/login.era?TARGET=https%3A%2F%2Fpublic.era.nih.gov%3A443%2Fxtract%2FxTractHome.era%3Fmenu_itemPath%3D613">{` eRA Commons `}</a>
-                            <span>and</span>
-                            <a href="https://auth.nih.gov/CertAuthV3/forms/erapivamswexemptMFADOC.aspx?TYPE=33554433&REALMOID=06-b66e745d-53f5-49b3-a3c5-32e7c9d5d6c5&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=nihwamwebagent&TARGET=-SM-HTTPS%3a%2f%2fauth%2enih%2egov%2feRA%2fredirectorexternal%2easp%3ftarget%3dhttps%3a%2f%2fpublic%2eera%2enih%2egov%3a443%2fcommons">{` NIH Login `}</a>
-                            <span>to authenticate researchers.</span>
-                        </div>
-                        <div className={classes.break}>
-                            <span>If you use eRA Commons, visit eRA’s</span>
-                            <a href="https://public.era.nih.gov/ams/public/accounts/password/reset.era">{` forgot password page `}</a>
-                            <span>to request a new password.</span>
+                            <span>The Hub does not manage passwords, but instead, uses an external system</span>
                         </div>
                         <div className={classes.break}>
                             <span>
-                                The NIH Login requires a smart card as opposed to a password. If you are having trouble with your smart
-                                card, visit the
+                                The other Login requires a card as opposed to a password. If you are having trouble with your
+                                card, visit the tutorial.
                             </span>
-                            <a href="https://auth.nih.gov/CertAuthV3/forms/passwordlinks.html">{` RAS Login Help `}</a>
-                            <span>page.</span>
                         </div>
                     </>
                 ),
@@ -108,12 +89,10 @@ export const contentArray = [
                 body: (
                     <>
                         <div className={classes.break}>
-                            <span>Yes, the NIH will deactivate your account if you violate the User Code of Conduct.</span>
+                            <span>Yes, we will deactivate your account if you violate the User Code of Conduct.</span>
                         </div>
                         <div className={classes.break}>
-                            <span>To deactivate your account, please contact the RADx Data Hub Administrator at</span>
-                            <a href="#">{` RADx-DataHub@nih.gov`}</a>
-                            <span>.</span>
+                            <span>To deactivate your account, please contact the Hub Administrator at </span>
                         </div>
                     </>
                 ),
@@ -124,14 +103,10 @@ export const contentArray = [
                 body: (
                     <>
                         <div className={classes.break}>
-                            <span>There are three ways to get in contact with the RADx Support Team: </span>
+                            <span>There are three ways to get in contact with the Support Team: </span>
                             <ul>
                                 <li>Login and use the ‘Contact Us’ link in the top navigation bar </li>
                                 <li>Login and use the ‘Contact’ widget on the side of the Home screen</li>
-                                <li>
-                                    Email the
-                                    <a href="http://RADx-DataHub@nih.gov">{` RADx Data Hub Support`}</a>
-                                </li>
                             </ul>
                         </div>
                     </>
@@ -143,23 +118,20 @@ export const contentArray = [
                 body: (
                     <>
                         <div className={classes.break}>
-                            <span>The RADx Data Hub does not require an account to search studies and access publicly available information. </span>
-                            <span>If you are onboarding a new team member, they will need an</span>
-                            <a href="https://www.era.nih.gov/register-accounts/register-in-era-commons.htm">{` eRA account `}</a>
-                            <span>or</span>
-                            <a href="https://auth.nih.gov/CertAuthV3/forms/erapivamswexemptMFADOC.aspx?TYPE=33554433&REALMOID=06-b66e745d-53f5-49b3-a3c5-32e7c9d5d6c5&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=nihwamwebagent&TARGET=-SM-HTTPS%3a%2f%2fauth%2enih%2egov%2feRA%2fredirectorexternal%2easp%3ftarget%3dhttps%3a%2f%2fpublic%2eera%2enih%2egov%3a443%2fcommons">{` NIH Login `}</a>
+                            <span>
+                                The Hub does not require an account to search studies and access publicly available information.{' '}
+                            </span>
+                            <span>If you are onboarding a new team member, they will need an account</span>
                             <span>
                                 to request study-level access to data files in dbGaP. Once they have an account, they will need to register
                                 for the RADx Data Hub using the same account they use for dbGaP.{' '}
                             </span>
                         </div>
                         <div className={classes.break}>
-                            <span>If you are offboarding a team member with an eRA account, contact the</span>
-                            <a href="https://www.era.nih.gov/need-help">{` eRA Help Desk.`}</a>
+                            <span>If you are offboarding a team member with an account, contact the support team</span>
                         </div>
                         <div className={classes.break}>
-                            <span>If you are offboarding a team member with an NIH account, ensure they follow NIH</span>
-                            <a href="https://policymanual.nih.gov/2300-940">{` separation policies.`}</a>
+                            <span>If you are offboarding a team member with another account, ensure they follow the rules</span>
                         </div>
                     </>
                 ),
@@ -176,11 +148,7 @@ export const contentArray = [
                 body: (
                     <>
                         <div>
-                            <span>The RADx Data Hub is a centralized repository for in-progress and complete</span>
-                            <a href="https://radx-up.org/">{` RADx-UP, `}</a>
-                            <a href="https://www.radxrad.org/">{` RADx-rad, `}</a>
-                            <span>and</span>
-                            <a href="https://www.nibib.nih.gov/covid-19/radx-tech-program">{` RADx Tech `}</a>
+                            <span>The Hub is a centralized repository for in-progress and complete studies</span>
                             <span>
                                 research study data. It also hosts RADx-DHT data information and links to the RAPIDS platform. Research data
                                 includes harmonized demographic and COVID-19 information (see Tier 1 CDE), as well as EHR, COVID testing,
@@ -190,11 +158,6 @@ export const contentArray = [
                     </>
                 ),
             },
-            // {
-            //     id: 'data-organization-2',
-            //     header: 'How are files organized?',
-            //     body: <></>,
-            // },
             {
                 id: 'data-organization-3',
                 header: 'What is the Global Codebook?',
@@ -202,8 +165,9 @@ export const contentArray = [
                     <>
                         <div>
                             <span>
-                                The NIH RADx Data Hub Global Codebook is the RADx-required Common Data Elements (CDEs) data dictionary. It
-                                contains precise mappings that organize (C)DCC-specific Data Elements into 12 unique, required CDE categories.
+                                The Hub Global Codebook is the Common Data Elements (CDEs) data dictionary. It
+                                contains precise mappings that organize (C)DCC-specific Data Elements into 12 unique, required CDE
+                                categories. Download the Global Codebook{' '}
                             </span>
                         </div>
                     </>
@@ -228,16 +192,25 @@ export const contentArray = [
                         </div>
                         <div className={classes.break}>
                             <span>
-                                Harmonized and non-harmonized data files require study-level access from dbGaP. You must first request access to
-                                the study in dbGaP, and then it will appear in the ‘My Approved Data’ tab.
+                                Harmonized and non-harmonized data files require study-level access from dbGaP. You must first request
+                                access to the study in dbGaP, and then it will appear in the ‘My Approved Data’ tab.
                             </span>
                         </div>
                         <div>
-                            <span>For more on finding these files, please view the <a href="/tutorial">RADx Tutorial</a> pages on these topics:</span>
+                            <span>
+                                For more on finding these files, please view the <a href="/tutorial">Tutorial</a> pages on these
+                                topics:
+                            </span>
                             <ul>
-                                <li><a href="/tutorial?tutorial=studyExplorer#view-studies-se">Searching for Studies</a></li>
-                                <li><a href="/tutorial?tutorial=studyOverview#view-study-info">Viewing the Study Overview page</a></li>
-                                <li><a href="/tutorial?tutorial=approvedData#download-files-ad">Accessing ‘My Approved Data’</a></li>
+                                <li>
+                                    <a href="/tutorial?tutorial=studyExplorer#view-studies-se">Searching for Studies</a>
+                                </li>
+                                <li>
+                                    <a href="/tutorial?tutorial=studyOverview#view-study-info">Viewing the Study Overview page</a>
+                                </li>
+                                <li>
+                                    <a href="/tutorial?tutorial=approvedData#download-files-ad">Accessing ‘My Approved Data’</a>
+                                </li>
                             </ul>
                         </div>
                     </>
@@ -293,9 +266,8 @@ export const contentArray = [
                         <div className={classes.break}>
                             <span>
                                 To request access to the data, click on the dbGaP link located under the ‘Study Name’ on the ‘Study
-                                Overview’ page. For more detailed instructions, review
+                                Overview’ page. For more detailed instructions, review tutorial.
                             </span>
-                            <a href="https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/GetPdf.cgi?document_name=GeneralAAInstructions.pdf">{` Tips on a Successful Data Request.`}</a>
                         </div>
                         <div className={classes.break}>
                             <span>
@@ -313,9 +285,9 @@ export const contentArray = [
                     <>
                         <div className={classes.break}>
                             <span>
-                                My Approved Data will only contain the current data file version. To receive an older version, please contact{ ' '}
+                                My Approved Data will only contain the current data file version. To receive an older version, please
+                                contact{' '}
                             </span>
-                            <a href="mailto:RADx-DataHub@nih.gov">{` RADx-DataHub@nih.gov.`}</a>
                         </div>
                     </>
                 ),
@@ -331,7 +303,6 @@ export const contentArray = [
                                 when requesting access to the study in dbGaP and visit the ‘My Approved Data’ page. If you still don’t see
                                 what you are looking for, reach out to
                             </span>
-                            <a href="mailto:RADx-DataHub@nih.gov">{` RADx-DataHub@nih.gov.`}</a>
                         </div>
                     </>
                 ),
@@ -349,8 +320,8 @@ export const contentArray = [
                     <>
                         <div className={classes.break}>
                             <span>
-                                Researchers can use the RADx Data Hub in-browser analytics tools (Jupyter Notebooks or SAS Viya) or download the
-                                data into a CSV file for analysis.
+                                Researchers can use the RADx Data Hub in-browser analytics tools (Jupyter Notebooks or SAS Viya) or download
+                                the data into a CSV file for analysis.
                             </span>
                         </div>
                     </>
@@ -363,8 +334,8 @@ export const contentArray = [
                     <>
                         <div className={classes.break}>
                             <span>
-                                Yes, you can download data from either Sagemaker, SAS Viya, or your My Approved Data page. Please
-                                see the Workbench User Tutorial for more details.
+                                Yes, you can download data from either Sagemaker, SAS Viya, or your My Approved Data page. Please see the
+                                Workbench User Tutorial for more details.
                             </span>
                         </div>
                     </>
@@ -380,7 +351,6 @@ export const contentArray = [
                                 Login and use the navigation bar’s ‘Contact Us’ link or the ‘Contact’ home page widget to submit ‘analytics’
                                 questions, or email us at
                             </span>
-                            <a href="mailto:RADx-DataHub@nih.gov">{` RADx-DataHub@nih.gov.`}</a>
                         </div>
                     </>
                 ),
@@ -395,7 +365,6 @@ export const contentArray = [
                                 Login and use the navigation bar’s ‘Contact Us’ link or the ‘Contact’ home page widget to submit ‘analytics’
                                 questions, or email us at
                             </span>
-                            <a href="mailto:RADx-DataHub@nih.gov">{` RADx-DataHub@nih.gov.`}</a>
                         </div>
                     </>
                 ),
@@ -423,8 +392,8 @@ export const contentArray = [
                 body: (
                     <>
                         <div className={classes.break}>
-                            RADx data are subject to the Data Use Certification Agreement
-                            you signed when you requested access to a study in dbGaP.
+                            RADx data are subject to the Data Use Certification Agreement you signed when you requested access to a study in
+                            dbGaP.
                         </div>
                     </>
                 ),
@@ -438,34 +407,12 @@ export const contentArray = [
                             <span>
                                 The RADx Data Hub relies on DbGaP to manage access to studies and their associated data files. Requested
                                 dataset(s) access spans one (1) year with the option to renew for an additional year. You can renew your
-                                access at the end of each calendar year. To learn how to renew your access, review the dbGaP Tutorial on
+                                access at the end of each calendar year. To learn how to renew your access, review the dbGaP Tutorial
                             </span>
-                            <a href="https://www.youtube.com/watch?v=PG9D5mUouXg">{` renewals.`}</a>
                         </div>
                     </>
                 ),
             },
-            // {
-            //     id: 'data-use-and-compliance-8',
-            //     header: 'How do I cite studies in my research?',
-            //     body: (
-            //         <>
-            //             <div className={classes.break}>
-            //                 <span>
-            //                     Cite RADx Data Hub resources with the dbGaP version identifier (a number beginning with “phs”; for
-            //                     example, phs000000.v1.p1).
-            //                 </span>
-            //             </div>
-            //             <div className={classes.break}>
-            //                 <span>
-            //                     Cite the RADx Data Hub itself as follows: National Institutes of Health & RADx Data Hub Partners. NIH
-            //                     COVID Rapid Acceleration of Diagnostics (RADx) Data Hub. National Institutes of Health.
-            //                 </span>
-            //                 <a href="https://radxdatahub.nih.gov/">{` https://radxdatahub.nih.gov/`}</a>
-            //             </div>
-            //         </>
-            //     ),
-            // },
         ],
     },
     {
@@ -478,8 +425,8 @@ export const contentArray = [
                 body: (
                     <>
                         <span>
-                            Click “Data Submission” in the navigation bar’s Data Submitter dropdown. This will bring you to the
-                            Data Submitter Dashboard. Once there, click “+New Submission,” and follow the prompts.
+                            Click “Data Submission” in the navigation bar’s Data Submitter dropdown. This will bring you to the Data
+                            Submitter Dashboard. Once there, click “+New Submission,” and follow the prompts.
                         </span>
                     </>
                 ),
@@ -490,20 +437,20 @@ export const contentArray = [
                 body: (
                     <>
                         <i>
-                            Note: The system automatically versions files. Be sure that the file you are uploading has the exact same
-                            name as the one you are replacing. Otherwise, the system will fail to create a new version and replace
-                            the file. Do not put “v.1” or any version information in the file name.
+                            Note: The system automatically versions files. Be sure that the file you are uploading has the exact same name
+                            as the one you are replacing. Otherwise, the system will fail to create a new version and replace the file. Do
+                            not put “v.1” or any version information in the file name.
                         </i>
                         <br />
                         <br />
                         <div className={classes.break}>
                             <span>
-                                To upload a new version, go to the Data Submission dashboard and start a new submission. On the step
-                                one, be sure to upload a file with the exact same name as the one you plan on replacing and continue
-                                through the prompts in the workflow. In the Review and Submit step, you will be able to verify whether
-                                the upload will create a new version of your files. If all is correct, press “Submit,” and the files will
-                                be sent to our data curation team for review. If there are no errors, the new files will replace your previous
-                                files in the system.
+                                To upload a new version, go to the Data Submission dashboard and start a new submission. On the step one, be
+                                sure to upload a file with the exact same name as the one you plan on replacing and continue through the
+                                prompts in the workflow. In the Review and Submit step, you will be able to verify whether the upload will
+                                create a new version of your files. If all is correct, press “Submit,” and the files will be sent to our
+                                data curation team for review. If there are no errors, the new files will replace your previous files in the
+                                system.
                             </span>
                         </div>
                     </>
@@ -516,9 +463,9 @@ export const contentArray = [
                     <>
                         <div className={classes.break}>
                             <span>
-                                After registration, you cannot edit RADx Data Hub study metadata directly in the system. To edit your metadata, please contact{' '}
+                                After registration, you cannot edit RADx Data Hub study metadata directly in the system. To edit your
+                                metadata, please contact{' '}
                             </span>
-                            <a href="mailto:RADx-DataHub@nih.gov">{` RADx-DataHub@nih.gov.`}</a>
                         </div>
                     </>
                 ),
@@ -529,10 +476,7 @@ export const contentArray = [
                 body: (
                     <>
                         <div className={classes.break}>
-                            <span>
-                                If a participant withdraws their consent, contact{' '}
-                            </span>
-                            <a href="mailto:RADx-DataHub@nih.gov">{` RADx-DataHub@nih.gov.`}</a>
+                            <span>If a participant withdraws their consent, contact </span>
                             <span>
                                 at your earliest convenience. We will remove the entire study dataset. You will need to provide revised
                                 study data, with the participant redacted, to replace your original submission. We will notify any data

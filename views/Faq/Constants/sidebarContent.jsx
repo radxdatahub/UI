@@ -17,7 +17,6 @@ export const sidebarOptions = [
         id: '#data-organization',
         dropdown: [
             { name: 'Data in the RADx Data Hub', id: '#data-organization-1' },
-            //{ name: 'File Organization', id: '#data-organization-2' },
             { name: 'The Global Codebook ', id: '#data-organization-3' },
         ],
     },
@@ -50,7 +49,7 @@ export const sidebarOptions = [
         name: 'Submitting Data in the RADx Data Hub',
         id: '#submit-data',
         dropdown: [
-            { name: 'Adding New Itmes to My Study', id: '#submit-data-1' },
+            { name: 'Adding New Items to My Study', id: '#submit-data-1' },
             { name: 'Replacing Datasets and Documents', id: '#submit-data-2' },
             { name: 'Editing Study Metadata', id: '#submit-data-3' },
             { name: 'Study Participant Consent Withdrawal', id: '#submit-data-4' },

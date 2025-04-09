@@ -2,10 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import Button from '../../../components/Button/Button';
-import DownloadIcon from '../../../components/Images/svg/DownloadIcon';
 import classes from '../ResourceCenter.module.scss';
-import { GET_RESOURCE_CENTER_BUCKET } from '../../../constants/apiRoutes';
-import { sendGAEvent } from '@next/third-parties/google';
 
 /**
  * For Researcher Resource Cards
@@ -16,7 +13,7 @@ import { sendGAEvent } from '@next/third-parties/google';
 const moreButtonClasses = `${classes.moreButton} ${classes.teal}`;
 const downloadButtonClasses = `${classes.downloadButton} ${classes.teal}`;
 
-export const forResearchersCards = (router, baseUrl) => {
+export const forResearchersCards = (router, baseUrl, restGet) => {
     return [
         {
             title: 'Data Access Request Quick Start Guide',
@@ -32,25 +29,6 @@ export const forResearchersCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <div className={classes.footerEnd}>
-                        <a
-                            href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}Quick_Start-Accessing_RADx_Data_in_the_RADx_Data_Hub_2024.pdf`}
-                            download
-                            onClick={() =>
-                                sendGAEvent('event', 'resourceCenter', {
-                                    value: 'Download',
-                                    file: 'Quick_Start-Accessing_RADx_Data_in_the_RADx_Data_Hub_2024.pdf',
-                                })
-                            }
-                        >
-                            <Button
-                                className={downloadButtonClasses}
-                                label="PDF (118KB)"
-                                iconLeft={<DownloadIcon />}
-                                variant="primary"
-                                size="auto"
-                                rounded="lite"
-                            />
-                        </a>
                     </div>
                 </span>
             ),
@@ -68,13 +46,7 @@ export const forResearchersCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a
-                        href="https://sharing.nih.gov/accessing-data/accessing-genomic-data/how-to-request-and-access-datasets-from-dbgap"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -92,27 +64,8 @@ export const forResearchersCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <Link href="/tutorial">
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
+                        <Button className={moreButtonClasses} label="View Page" variant="primary" size="auto" rounded="lite" />
                     </Link>
-                    <a
-                        href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-User_Guide.pdf`}
-                        download
-                        onClick={() =>
-                            sendGAEvent('event', 'resourceCenter', {
-                                value: 'Download',
-                                file: 'RADx_Data_Hub-User_Guide.pdf',
-                            })
-                        }
-                    >
-                        <Button
-                            className={downloadButtonClasses}
-                            label="PDF (3.2MB)"
-                            iconLeft={<DownloadIcon />}
-                            variant="primary"
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
                 </span>
             ),
         },
@@ -127,25 +80,6 @@ export const forResearchersCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <div className={classes.footerEnd}>
-                        <a
-                            href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-Data_Use_Agreement.pdf`}
-                            download
-                            onClick={() =>
-                                sendGAEvent('event', 'resourceCenter', {
-                                    value: 'Download',
-                                    file: 'RADx_Data_Hub-Data_Use_Agreement.pdf',
-                                })
-                            }
-                        >
-                            <Button
-                                className={downloadButtonClasses}
-                                label="PDF (439KB)"
-                                iconLeft={<DownloadIcon />}
-                                variant="primary"
-                                size="auto"
-                                rounded="lite"
-                            />
-                        </a>
                     </div>
                 </span>
             ),
@@ -164,13 +98,7 @@ export const forResearchersCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a
-                        href={`https://sharing.nih.gov/sites/default/files/flmngr/NIH_Best_Practices_for_Controlled-Access_Data_Subject_to_the_NIH_GDS_Policy.pdf`}
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -185,27 +113,8 @@ export const forResearchersCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <Link href="/workbenchTutorial">
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
+                        <Button className={moreButtonClasses} label="View Page" variant="primary" size="auto" rounded="lite" />
                     </Link>
-                    <a
-                        href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-Workbench_User_Guide.pdf`}
-                        download
-                        onClick={() =>
-                            sendGAEvent('event', 'resourceCenter', {
-                                value: 'Download',
-                                file: 'RADx_Data_Hub-Workbench_User_Guide.pdf',
-                            })
-                        }
-                    >
-                        <Button
-                            className={downloadButtonClasses}
-                            label="PDF (553KB)"
-                            iconLeft={<DownloadIcon />}
-                            variant="primary"
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
                 </span>
             ),
         },
@@ -223,25 +132,6 @@ export const forResearchersCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <div className={classes.footerEnd}>
-                        <a
-                            href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-Workbench_Term_of_Service.pdf`}
-                            download
-                            onClick={() =>
-                                sendGAEvent('event', 'resourceCenter', {
-                                    value: 'Download',
-                                    file: 'RADx_Data_Hub-Workbench_Term_of_Service.pdf',
-                                })
-                            }
-                        >
-                            <Button
-                                className={downloadButtonClasses}
-                                label="PDF (792KB)"
-                                iconLeft={<DownloadIcon />}
-                                variant="primary"
-                                size="auto"
-                                rounded="lite"
-                            />
-                        </a>
                     </div>
                 </span>
             ),

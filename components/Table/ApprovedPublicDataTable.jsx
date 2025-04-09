@@ -21,6 +21,7 @@ import {
 } from '@tanstack/react-table';
 import { PUT_FILES_TO_WORKBENCH, MOVE_PUBLIC_TO_WORKBENCH, GET_SELECTED_FILES, GET_SELECTED_PUBLIC_DATA } from '../../constants/apiRoutes';
 import useRest from '../../lib/hooks/useRest';
+import { downloadLink } from '../../lib/pageHelpers/downloadLink';
 
 /**
  * Interactable Table component
@@ -65,10 +66,10 @@ import useRest from '../../lib/hooks/useRest';
  */
 
 const ApprovedPublicDataTable = (props) => {
-    const { publicData, tableRows, tableHeaders, ariaCaption, allowSort, noHover, responsive, hasWorkbench, baseUrl } = props;
+    const { publicData, tableRows, tableHeaders, ariaCaption, allowSort, noHover, responsive, hasWorkbench, baseUrl, studyId } = props;
 
     // API related variables
-    const { restPut } = useRest();
+    const { restPut, restGet } = useRest();
     const { user } = useSelector((state) => state.userProfile);
 
     // Tanstack state tracker
@@ -219,7 +220,7 @@ const ApprovedPublicDataTable = (props) => {
             fileCount = selectedFiles.split(',').length;
 
             await restPut(
-                MOVE_PUBLIC_TO_WORKBENCH.replace('[fileIDs]', selectedFiles),
+                MOVE_PUBLIC_TO_WORKBENCH.replace('[fileIDs]', selectedFiles).replace('[studyId]', studyId),
                 {},
                 {
                     showLoading: true,
@@ -237,7 +238,7 @@ const ApprovedPublicDataTable = (props) => {
                 PUT_FILES_TO_WORKBENCH.replace('[sasFileIDs]', selectedFiles.sasFileIds).replace(
                     '[dataFileIDs]',
                     selectedFiles.dataFileIds
-                ),
+                ).replace('[studyId]', studyId),
                 {},
                 {
                     showLoading: true,
@@ -318,22 +319,30 @@ const ApprovedPublicDataTable = (props) => {
                 </div>
 
                 <div className="pullRight">
-                    <a
-                        href={
-                            publicData
-                                ? `${baseUrl}${GET_SELECTED_PUBLIC_DATA.replace('[sessionID]', user?.sessionID).replace(
-                                      '[fileIDs]',
-                                      getSelectedFiles()
-                                  )}`
-                                : `${baseUrl}${GET_SELECTED_FILES.replace('[sessionID]', user?.sessionID)
-                                      .replace('[sasFileIDs]', getSelectedFiles().sasFileIds)
-                                      .replace('[dataFileIDs]', getSelectedFiles().dataFileIds)}`
-                        }
-                        onClick={(e) => (showActionButtons ? true : e.preventDefault())}
-                        download
-                    >
-                        <Button className={classes.generalButton} label="Zip & Download" variant="primary" disabled={!showActionButtons} />
-                    </a>
+                    <Button
+                        className={classes.generalButton}
+                        label="Zip & Download"
+                        variant="primary"
+                        disabled={!showActionButtons}
+                        handleClick={async () => {
+                            if (publicData) {
+                                downloadLink(
+                                    `${baseUrl}${GET_SELECTED_PUBLIC_DATA.replace('[sessionID]', user?.sessionID).replace(
+                                        '[fileIDs]',
+                                        getSelectedFiles()
+                                    )}`,
+                                    restGet
+                                );
+                            } else {
+                                downloadLink(
+                                    `${baseUrl}${GET_SELECTED_FILES.replace('[sessionID]', user?.sessionID)
+                                        .replace('[sasFileIDs]', getSelectedFiles().sasFileIds)
+                                        .replace('[dataFileIDs]', getSelectedFiles().dataFileIds)}`,
+                                    restGet
+                                );
+                            }
+                        }}
+                    />
                     {hasWorkbench && (
                         <Button
                             className={classes.generalButton}

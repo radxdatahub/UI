@@ -7,8 +7,12 @@ import { sidebarOptions } from './Constants/sidebarContent';
 import Banner from '../../components/Banner/Banner';
 import { scrollToTop } from '../../lib/componentHelpers/scrollHelpers';
 import ChevronUpIcon from '../../components/Images/svg/ChevronUpIcon';
+import useRest from '../../lib/hooks/useRest';
 
 const Faq = (props) => {
+    const { baseUrl } = props;
+    const { restGet } = useRest();
+
     const crumbs = [
         {
             page: 'Home',
@@ -59,13 +63,13 @@ const Faq = (props) => {
                     })}
                 </Col>
                 <Col lg="9" className={`px-5 py-5 ${classes.contentContainer}`}>
-                    {contentArray.map((obj) => {
+                    {contentArray(baseUrl, restGet).map((obj) => {
                         return contentLayout(obj);
                     })}
                 </Col>
             </Row>
             <div className={classes.scrollButtonContainer}>
-                <button type="button" className={classes.scrollButton} aria-label='scroll to top' onClick={() => scrollToTop()}>
+                <button type="button" className={classes.scrollButton} aria-label="scroll to top" onClick={() => scrollToTop()}>
                     <ChevronUpIcon width={28} height={28} />
                 </button>
             </div>

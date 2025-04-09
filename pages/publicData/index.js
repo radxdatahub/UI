@@ -25,7 +25,13 @@ export async function getServerSideProps(context) {
         publicData = publicDataResponse.data.collections;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -39,6 +45,7 @@ export async function getServerSideProps(context) {
             publicData,
             hasWorkbench,
             baseUrl,
+            pageTitle: 'Public Data Access',
         },
     };
 }

@@ -27,8 +27,8 @@ const GettingStarted = () => {
                         <div>
                             This page contains step-by-step information on how to explore RADx<span className={classes.registered}>®</span>{' '}
                             studies or variables and access analytic software via the RADx Researcher Workbench. If you are a data
-                            submitter, please visit our “For Submitters” section on the{' '}
-                            <Link href="/resourceCenter">Resource Center page</Link>.
+                            submitter, please visit our <Link href="/resourceCenter/forSubmitters">“For Submitters”</Link> section on the{' '}
+                            <Link href="/resourceCenter">Resource Center</Link> page.
                         </div>
                     }
                 />
@@ -40,7 +40,7 @@ const GettingStarted = () => {
                                 Navigate to the <Link href="/studyExplorer?&sort=asc&prop=title&page=1&size=50">Study Explorer</Link>.
                             </li>
                             <li>
-                                Enter your search term in the search bar. Use the <b>Filters</b> and <b>Advanced Search</b> features to
+                                Enter your search term in the search bar. Use the <b>Filters</b> to
                                 refine your search results.
                             </li>
                             <li>
@@ -105,7 +105,15 @@ const GettingStarted = () => {
                         <p>
                             The RADx Data Hub contains two types of data: Public access data (including synthetic data) and
                             controlled-access data. Users can access public data by logging in, then navigating to{' '}
-                            <Link href="/publicData">Public Data</Link> in the <b>Data Access</b> tab. To access controlled-access data:
+                            <Link href="/publicData">Public Data</Link> in the <b>Data Access</b> tab. For controlled-access data, the RADx
+                            Data Hub requires eRA Commons authentication and dbGaP authorization. Data requestors must have an eRA Commons
+                            (or NIH login) account with PI status to submit a request. Non-PIs must have a PI submit a dbGaP request on
+                            their behalf. Once the PI is granted data access, the PI can grant team members access by logging into dbGaP and
+                            adding them as a downloader. For more information,{' '}
+                            <Link href="/tutorial?tutorial=requestingDataAccess">
+                                visit the Request Data Access section of the User Tutorial
+                            </Link>
+                            . To access controlled-access data as a PI:
                         </p>
                         <ol>
                             <li>
@@ -129,9 +137,12 @@ const GettingStarted = () => {
                                     <b>dbGaP Study Accession IDs</b> of interest.
                                 </div>
                             </li>
+                            <li>You will receive a study access confirmation email from dbGaP once access has been granted.</li>
+                            <li>To add a downloader, log back in to dbGaP, navigate to the Downloaders tab, and add team members.</li>
                             <li>
-                                You will receive a study access confirmation email from dbGaP once access has been granted. To analyze data
-                                in the RADx Data Hub, follow the steps below.
+                                To access data in the RADx Data Hub, return to the <Link href="/">RADx Data Hub</Link> and login with the{' '}
+                                <b>same eRA</b> or <b>NIH Login</b> as dbGaP. Navigate to{' '}
+                                <Link href="/myApprovedData">My Approved Data</Link> in the <b>Data Access</b> tab.
                             </li>
                         </ol>
                         <br />
@@ -157,15 +168,7 @@ const GettingStarted = () => {
                             </li>
                             <li>
                                 Read the <Link href={`/workbenchTutorial`}>Workbench User Tutorial</Link> and view our Getting Started
-                                videos on{' '}
-                                <a href="https://www.youtube.com/watch?v=Tq-8GBewoME" target="_blank" rel="noopener noreferrer">
-                                    creating a workbench and adding files
-                                </a>
-                                , and{' '}
-                                <a href="https://www.youtube.com/watch?v=wyH2mVLJ9ng" target="_blank" rel="noopener noreferrer">
-                                    data analysis in the Workbench
-                                </a>{' '}
-                                for further guidance.
+                                videos on workbench items.
                             </li>
                         </ol>
                         <br />
@@ -180,10 +183,7 @@ const GettingStarted = () => {
                                                 <Person size={35} />
                                             </div>
                                             <div>
-                                                Read the User Tutorial at:{' '}
-                                                <Link href="/tutorial" legacyBehavior>
-                                                    radxdatahub.nih.gov/tutorial
-                                                </Link>
+                                                Read the User Tutorial on the tutorial page
                                             </div>
                                         </li>
                                         <li>
@@ -191,10 +191,7 @@ const GettingStarted = () => {
                                                 <QuestionLg size={35} />
                                             </div>
                                             <div>
-                                                Access RADx Data Hub FAQs at:{' '}
-                                                <Link href="/faq" legacyBehavior>
-                                                    radxdatahub.nih.gov/faq
-                                                </Link>
+                                                Access Hub FAQs
                                             </div>
                                         </li>
                                     </ul>
@@ -206,11 +203,7 @@ const GettingStarted = () => {
                                                 <CameraVideo size={35} />
                                             </div>
                                             <div>
-                                                Check out our{' '}
-                                                <a href="https://www.youtube.com/@NIHRADxDataHub" target="_blank" rel="noopener noreferrer">
-                                                    YouTube channel
-                                                </a>{' '}
-                                                for tutorials and webinars
+                                                Check out our YouTube for tutorials and webinars
                                             </div>
                                         </li>
                                         <li>
@@ -218,8 +211,7 @@ const GettingStarted = () => {
                                                 <Envelope size={35} />
                                             </div>
                                             <div>
-                                                Email the RADx Data Hub Partners at:{' '}
-                                                <a href="mailto:RADx-DataHub@nih.gov">RADx-DataHub@nih.gov</a>
+                                                Email the Hub Partners at:
                                             </div>
                                         </li>
                                     </ul>

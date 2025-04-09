@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Dropdown, Nav, Navbar, NavItem, NavLink } from 'react-bootstrap';
 import classes from './NavBar.module.scss';
 import ChevronDownIcon from '../../Images/svg/ChevronDownIcon';
+import Button from '../../Button/Button';
 import Link from 'next/link';
 
 /**
@@ -30,40 +31,46 @@ const NavigationBar = (props) => {
     // After the public-facing 5 nav items, the length of the largest -> smallest nav items (with opened dropdowns) are accounted for
     // If the name of a nav item changes or more nav items are added, the breakpoints will need to change
     const showCollapsedNav = () => {
-        if (size < 935) {
+        if (size < 1040) {
             return true;
-        } else if (size < 1125) {
+        } else if (size < 1210) {
             if (tabList.length > 5) {
                 return true;
             } else {
                 return false;
             }
-        } else if (size < 1380) {
+        } else if (size < 1470) {
             if (tabList.length > 6) {
                 return true;
             } else {
                 return false;
             }
-        } else if (size < 1630) {
+        } else if (size < 1660) {
             if (tabList.length > 7) {
                 return true;
             } else {
                 return false;
             }
-        } else if (size < 1810) {
+        } else if (size < 1850) {
             if (tabList.length > 8) {
                 return true;
             } else {
                 return false;
             }
-        } else if (size < 1960) {
+        } else if (size < 1995) {
             if (tabList.length > 9) {
                 return true;
             } else {
                 return false;
             }
-        } else if (size < 2080) {
+        } else if (size < 2125) {
             if (tabList.length > 10) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (size < 2255) {
+            if (tabList.length > 11) {
                 return true;
             } else {
                 return false;
@@ -166,9 +173,15 @@ const NavigationBar = (props) => {
     return (
         <Navbar className={navClasses} sticky="top" expand={!collapsed} collapseOnSelect>
             <Navbar.Toggle aria-controls="navbar-collapse" className={classes.toggle} />
+            <Link href="/support" className={!collapsed ? classes.hide : ''}>
+                <Button className={classes.needSupport} variant="secondary" label="Need Support?" />
+            </Link>
             <Navbar.Collapse id="navbar-collapse" className={classes.collapse}>
                 {items}
             </Navbar.Collapse>
+            <Link href="/support" className={collapsed ? classes.hide : ''}>
+                <Button className={classes.needSupport} variant="secondary" label="Need Support?" />
+            </Link>
         </Navbar>
     );
 };

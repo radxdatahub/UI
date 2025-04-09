@@ -4,12 +4,14 @@ import logger from '../../lib/logger';
 import Metrics from '../../views/Metrics/Metrics';
 import { GET_HUB_CONTENT, GET_HUB_CONTENT_CSV, GET_REPORT_IDS } from '../../constants/apiRoutes';
 import { generateMetricsRows } from '../../lib/componentHelpers/TableHelpers/metricsTableHelpers';
+import Cookies from 'js-cookie';
 
 const MetricsHub = (props) => <Metrics {...props} />;
 
 export async function getServerSideProps(context) {
     logger.defaultMeta.service = 'Metrics Reports - Hub Content';
-    const { req, query } = context;
+    const { req } = context;
+    let { query } = context;
     let dateResponse;
 
     logger.info('Getting Report ID List : %s', GET_REPORT_IDS);
@@ -25,7 +27,16 @@ export async function getServerSideProps(context) {
         dateResponse = getReportIDReponse?.data;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
-        if ([400, 401, 403].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            if (e?.response?.status === 401) {
+                Cookies.remove('chocolateChip');
+            }
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -33,19 +44,28 @@ export async function getServerSideProps(context) {
             };
         }
     }
+
     const aggregations = [
         { label: 'RADx Program', value: 'dcc' },
         { label: 'Study', value: 'study' },
     ];
 
-    // grab Year Index, Month Index, and Report Index for initialization if a query was passed
+    // Set query params if not initialized
+    if (Object.keys(query).length === 0) {
+        const latestYearIndex = dateResponse.length - 1;
+        const latestMonthIndex = dateResponse[latestYearIndex].months.length - 1;
+        const latestReportIDIndex = dateResponse[latestYearIndex].months[latestMonthIndex].reports.length - 1;
+        query = { aggBy: 'dcc', yi: latestYearIndex, mi: latestMonthIndex, ri: latestReportIDIndex };
+    }
+
+    // grab Year Index, Month Index, and Report Index
     const selectedIDs = { year: query?.yi, month: query?.mi, reportID: query?.ri };
     logger.info('setting selected IDs : %s', selectedIDs);
     // we can't know the report id from the URL, so we have to parse it first (which is very gross but this is the API I was given)
     const reportId = dateResponse[selectedIDs?.year]?.months[selectedIDs?.month]?.reports[selectedIDs?.reportID]?.reportId || undefined;
     logger.info('setting reportID : %s', dateResponse[selectedIDs?.year]?.months[selectedIDs?.month]);
     let tableRows = {};
-    let totalRow = [];
+    const totalRow = [];
     let tableColumns = {};
     const reportType = {
         label: 'Hub Content',
@@ -78,21 +98,26 @@ export async function getServerSideProps(context) {
             const tempRow = tableRows.pop();
             tableColumns = getHubMetricsResponse.data.columnNames;
             tableColumns.map((columnName) => {
-                if (columnName == 'Data Size') {
+                if (columnName === 'Data Size') {
                     const size = tempRow[columnName];
                     const newSize = (size >= 1000
                         ? Math.round((size / 1000 + Number.EPSILON) * 100) / 100 + 'GB'
-                        : Number.parseFloat((props.getValue() + Number.EPSILON) * 100 / 100).toFixed(1) + 'MB');
+                        : Number.parseFloat((size + Number.EPSILON) * 100 / 100).toFixed(1) + 'MB');
                     tempRow[columnName] = newSize;
-                }
-                else if (columnName === 'Study Name') {
+                } else if (columnName === 'Study Name') {
                     tempRow[columnName] = '-';
                 }
                 return totalRow.push(tempRow[columnName]);
             });
         } catch (e) {
             logger.error(`Get Hub Metrics call failed: ${e?.response?.data?.message || e?.response?.data?.detail || e}`);
-            if ([400, 401, 403].includes(e?.response?.status)) {
+            if ([404, 500].includes(e?.response?.status)) {
+                return {
+                    redirect: {
+                        destination: `/${e?.response?.status}`,
+                    },
+                };
+            } else if ([400, 401, 403].includes(e?.response?.status)) {
                 return {
                     redirect: {
                         destination: `/?e=${e?.response?.status}`,
@@ -123,10 +148,11 @@ export async function getServerSideProps(context) {
             tableColumns,
             reportType,
             aggregations,
-            reportIDs: { years: years, dateResponse: dateResponse },
-            initData: { months: initializedMonths, IDList: initIDs, selectedIDs: selectedIDs, aggregate: query.aggBy }, // if query is present
+            reportIDs: { years, dateResponse },
+            initData: { months: initializedMonths, IDList: initIDs, selectedIDs, aggregate: query.aggBy }, // if query is present
             redirectString: '/metrics/HubContent',
             CSV_URL: GET_HUB_CONTENT_CSV.replace('[aggBy]', aggBy).replace('[reportId]', reportId),
+            pageTitle: 'Metrics'
         },
     };
 }

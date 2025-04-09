@@ -7,7 +7,7 @@ import { ParallaxProvider } from 'react-scroll-parallax';
 import '@fontsource-variable/open-sans';
 import { useRouter } from 'next/router';
 import { useStore } from '../store/store';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { hideLoading, showLoading } from '../store/environment/environmentSlice';
 import { SSRProvider } from 'react-bootstrap';
 import { GoogleAnalytics } from '@next/third-parties/google';
@@ -33,6 +33,18 @@ function Application({ Component, pageProps }) {
             router.events.off('routeChangeError', end);
         };
     }, [router]);
+
+    // const usePreviousRoute = () => {
+    //     const { asPath } = useRouter();
+
+    //     const ref = useRef(null);
+
+    //     useEffect(() => {
+    //       ref.current = asPath;
+    //     }, [asPath]);
+
+    //     return ref.current;
+    //   };
 
     return (
         <SSRProvider>

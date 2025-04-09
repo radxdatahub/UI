@@ -10,7 +10,7 @@ const StudyBrowserPage = (props) => <StudyExplorer {...props} />;
 export async function getServerSideProps(context) {
     logger.defaultMeta.service = 'Study Explorer';
     const { req, query } = context;
-    if (!query?.size) {
+    if (!query?.size || typeof query?.size === "string") {
         query.size = '50';
     }
     if (!query?.page) {
@@ -30,7 +30,10 @@ export async function getServerSideProps(context) {
         query[key] = query[key].replace('\\', '');
         searchQuery += '&' + key + '=' + encodeURIComponent(query[key]);
     }
-    let searchResults, facetList, properties = [];
+    let searchResults; let facetList; let properties = [];
+
+    //sanitize query for vulnerability issue
+    searchQuery = searchQuery.replace(/([.*;+^$[\]\\(){}])/g, '')
 
     logger.info('Calling SEARCH_STUDIES with : %s', SEARCH_STUDIES + searchQuery);
     try {
@@ -87,6 +90,7 @@ export async function getServerSideProps(context) {
             properties,
             initialQuery,
             CSV_URL: `${SEARCH_STUDIES}/csv${searchQuery}`,
+            pageTitle: 'Study Explorer',
         },
     };
 }

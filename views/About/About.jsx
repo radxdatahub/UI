@@ -6,7 +6,6 @@ import Banner from '../../components/Banner/Banner';
 import Card from '../../components/Card/Card';
 import { useRouter } from 'next/router';
 import Image from 'next/legacy/image';
-import renciLogo from './images/renci-logo 2.png';
 import bahLogo from './images/Picture1 1.png';
 import stanfordLogo from './images/BMIR_logo_stack_85bc295d4b 1.png';
 import ExternalLinkIcon from '../../components/ExternalLinkIcon/ExternalLinkIcon';
@@ -53,7 +52,7 @@ const About = (props) => {
                     </Col>
 
                     <Col lg={4}>
-                        <Image priority src="/images/radx-4-collage.png" width="1500px" height="532px" />
+                        <Image priority src="/images/4-collage.png" width="1500px" height="532px" />
                     </Col>
                 </Row>
                 <Row className={`${classes.Row} whiteTextBackground`}>
@@ -118,10 +117,6 @@ const About = (props) => {
                     <Col lg={12}>
                         <Card title="About RADx Data Hub Partners" headerImg="/images/large1.png" variant="info" bkgdColor="#EDEDED">
                             <div className="pb-3">
-                                <p>
-                                    A partnership of Stanford University (Stanford), Booz Allen Hamilton, and the Renaissance Computing
-                                    Institute (RENCI) assists the NIH with three key aspects of the RADx Data Hub:
-                                </p>
                                 <div className={classes.list}>
                                     <ul>
                                         <li>
@@ -151,20 +146,12 @@ const About = (props) => {
                                             <span className={classes.bold}>Program Management:</span> Establish and maintain effective
                                             cross-disciplinary program management, including technical development, data coordinating center
                                             connectivity, researcher engagement, and training{' '}
-                                            <span className={classes.bold}>
-                                                (
-                                                <a href="https://renci.org/" target="_blank" rel="noreferrer">
-                                                    RENCI
-                                                </a>
-                                                <ExternalLinkIcon />)
-                                            </span>
                                         </li>
                                     </ul>
                                 </div>
                                 <div className={classes.partners}>
                                     <Image src={stanfordLogo} alt="Stanford Logo" />
-                                    <Image src={bahLogo} alt="Stanford Logo" />
-                                    <Image src={renciLogo} alt="Stanford Logo" />
+                                    <Image src={bahLogo} alt="BAH Logo" />
                                 </div>
                             </div>
                         </Card>

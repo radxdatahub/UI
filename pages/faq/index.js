@@ -1,16 +1,18 @@
 import React from 'react';
 import Faq from '../../views/Faq/Faq';
 import logger from '../../lib/logger';
-import { GET_REQUEST_TYPES } from '../../constants/apiRoutes';
-import axios from 'axios';
 
 const FaqPage = (props) => <Faq {...props} />;
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
     logger.defaultMeta.service = 'faq';
-    const { req } = context;
+    const baseUrl = process.env.DEV_URL;
+
     return {
-        props: {},
+        props: {
+            baseUrl,
+            pageTitle: 'Frequently Asked Questions',
+        },
     };
 }
 

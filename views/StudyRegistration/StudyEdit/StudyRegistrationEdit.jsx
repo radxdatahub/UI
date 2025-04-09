@@ -21,6 +21,8 @@ import { scrollToTop } from '../../../lib/componentHelpers/scrollHelpers';
 import { ChevronLeft, Download, ChevronRight } from 'react-bootstrap-icons';
 import TextArea from '../../../components/TextArea/TextArea';
 import Cookies from 'js-cookie';
+import ReturnToDashModal from './Components/ReturnToDashModal';
+import { downloadLink } from '../../../lib/pageHelpers/downloadLink';
 
 /**
  * This is the dynamic Study Registration Form that is prepopulated from the fields in DBGap's MTA form a curator uploads on the Study Registration Dashboard
@@ -54,6 +56,8 @@ const StudyRegistrationEdit = (props) => {
     ];
 
     const dispatch = useDispatch();
+
+    const [returnModal, setReturnModal] = useState(false);
 
     // DCC other field badges
     const [foa, setFoa] = useState(formData?.FOA_number || []);
@@ -124,7 +128,7 @@ const StudyRegistrationEdit = (props) => {
     };
 
     const router = useRouter();
-    const { restPut } = useRest();
+    const { restPut, restGet } = useRest();
     const {
         register,
         handleSubmit,
@@ -146,7 +150,7 @@ const StudyRegistrationEdit = (props) => {
         data.data_sharing_info = dataSharingInfo;
         data.is_multi_center = isMultiCenter;
         // if form isValid, process all of the array fields and do the calls
-        if ((isValid && Object.keys(dirtyFields).length > 0) || (shouldSubmit && isValid)) {
+        if ((isValid && Object.keys(dirtyFields).length > 0) || !shouldSubmit || isValid) {
             data.FOA_number = [...foa, data.FOA_number ? data.FOA_number : null];
             if (isEmpty(data.FOA_number[data.FOA_number.length - 1])) {
                 data.FOA_number.pop();
@@ -250,9 +254,30 @@ const StudyRegistrationEdit = (props) => {
                     successMessage: 'Study successfully updated',
                 }
             );
-
+            if (shouldSubmit && !isValid) {
+                scrollToTop();
+                const tempNotification = { ...BaseNotification };
+                tempNotification.message = 'There were errors with your input fields.  Please review the outlined fields.';
+                tempNotification.type = NotificationType.ERROR;
+                dispatch(addNotification(tempNotification));
+                return;
+            }
             if (updateResult.request.status === 200 && updateResult?.data.success === true) {
-                router.push(`/${type.toLowerCase()}/studyRegistration`);
+                if (shouldSubmit && isValid) {
+                    router.push(`/${type.toLowerCase()}/studyRegistration`);
+                    const tempNotification = { ...BaseNotification };
+                    tempNotification.message = 'Your submission was successfully processed.';
+                    tempNotification.type = NotificationType.SUCCESS;
+                    dispatch(addNotification(tempNotification));
+                } else if (!shouldSubmit) {
+                    scrollToTop();
+                    Object.keys(dirtyFields).forEach((key) => delete dirtyFields[key]);
+                    const tempNotification = { ...BaseNotification };
+                    tempNotification.message =
+                        'Your changes have been successfully saved. Please note: any errors indicated on the form are required to be addressed before submitting.';
+                    tempNotification.type = NotificationType.SUCCESS;
+                    dispatch(addNotification(tempNotification));
+                }
             }
         } else {
             scrollToTop();
@@ -281,9 +306,18 @@ const StudyRegistrationEdit = (props) => {
             )}
             <Container>
                 <Row className="mb-2 mt-2">
+                    <ReturnToDashModal
+                        visible={returnModal}
+                        closeModal={setReturnModal}
+                        handleSave={() => {
+                            handleSubmit(handleSubmitHelper(getValues(), false));
+                            router.push(`/${type.toLowerCase()}/studyRegistration`);
+                        }}
+                        type={type}
+                    />
                     <Col lg={3}>
                         <Row className="mb-2">
-                            <Input value={formData?.dcc} controlId="dcc" label="RADx Data Program" disabled />
+                            <Input value={formData?.dcc} controlId="dcc" label="Program" disabled />
                         </Row>
 
                         <Row className="mb-2">
@@ -317,22 +351,27 @@ const StudyRegistrationEdit = (props) => {
                         size="auto"
                         variant="secondary"
                         handleClick={() => {
-                            router.push(`/${type.toLowerCase()}/studyRegistration`);
+                            if (Object.keys(dirtyFields).length > 0) {
+                                setReturnModal(true);
+                            } else {
+                                router.push(`/${type.toLowerCase()}/studyRegistration`);
+                            }
                         }}
                     />
                     <span className={classes.shoveRight}>Please review and edit these fields if necessary.</span>
                     <div>
                         <Row className="mb-2">
-                            <a href={`${PDF_URL}${Cookies.get('chocolateChip')}`} download suppressHydrationWarning={true}>
-                                <Button
-                                    label="Download Study PDF"
-                                    iconLeft={<Download />}
-                                    className={classes.downloadButton}
-                                    ariaLabel="Return to the Study Registration Dashboard"
-                                    size="none"
-                                    variant="tertiary"
-                                />
-                            </a>
+                            <Button
+                                label="Download Study PDF"
+                                iconLeft={<Download />}
+                                className={classes.downloadButton}
+                                ariaLabel="Return to the Study Registration Dashboard"
+                                size="none"
+                                variant="tertiary"
+                                handleClick={async () => {
+                                    downloadLink(`${PDF_URL}${Cookies.get('chocolateChip')}`, restGet);
+                                }}
+                            />
                         </Row>
                         {type === 'Curator' && (
                             <Row>
@@ -393,20 +432,26 @@ const StudyRegistrationEdit = (props) => {
                             size="auto"
                             variant="secondary"
                             handleClick={() => {
-                                router.push(`/${type.toLowerCase()}/studyRegistration`);
+                                if (Object.keys(dirtyFields).length > 0) {
+                                    setReturnModal(true);
+                                } else {
+                                    router.push(`/${type.toLowerCase()}/studyRegistration`);
+                                }
                             }}
                         />
                     </Col>
-                    <Col lg={{ offset: 6 }}>
-                        <Button
-                            label="Save"
-                            ariaLabel="Save Updates"
-                            size="medium"
-                            variant="tertiary"
-                            handleClick={() => {
-                                handleSubmit(handleSubmitHelper(getValues(), 'false'));
-                            }}
-                        />
+                    <Col lg={{ offset: 5 }}>
+                        <div className="pullRight">
+                            <Button
+                                label="Save"
+                                ariaLabel="Save Updates"
+                                size="medium"
+                                variant="tertiary"
+                                handleClick={() => {
+                                    handleSubmit(handleSubmitHelper(getValues(), false));
+                                }}
+                            />
+                        </div>
                     </Col>
                     <Col>
                         <div className="pullRight">

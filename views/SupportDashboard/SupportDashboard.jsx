@@ -13,32 +13,7 @@ import { allSupportDashboard, initiatedSupportDashboard, inProgressSupportDashbo
 
 const SupportDashboard = (props) => {
     const router = useRouter();
-    const { getSupportDashboard } = props;
-
-    // set active state
-    const defaultState = {
-        label: 'Initiated',
-        value: 'initiated',
-    };
-    const [selectedItem, setSelectedItem] = useState(defaultState);
-
-    const [sidebarOpen, setSideBarOpen] = useState(true);
-    const handleViewSidebar = () => {
-        setSideBarOpen(!sidebarOpen);
-    };
-
-    const contentContainerClass = sidebarOpen ? classes.contentContainer : `${classes.contentContainer} ${classes.sidebarClosed}`;
-
-    useEffect(() => {
-        router.push(
-            {
-                pathname: router.pathname,
-                query: { status: selectedItem.value },
-            },
-            undefined,
-            { scroll: false }
-        );
-    }, [selectedItem]);
+    const { getSupportDashboard, status } = props;
 
     const menuItems = [
         {
@@ -58,6 +33,28 @@ const SupportDashboard = (props) => {
             value: 'closed',
         },
     ];
+
+    // set active state
+    const defaultState = menuItems.find((x) => x.value === status);
+    const [selectedItem, setSelectedItem] = useState(defaultState);
+
+    const [sidebarOpen, setSideBarOpen] = useState(true);
+    const handleViewSidebar = () => {
+        setSideBarOpen(!sidebarOpen);
+    };
+
+    const contentContainerClass = sidebarOpen ? classes.contentContainer : `${classes.contentContainer} ${classes.sidebarClosed}`;
+
+    useEffect(() => {
+        router.push(
+            {
+                pathname: router.pathname,
+                query: { status: selectedItem.value },
+            },
+            undefined,
+            { scroll: false }
+        );
+    }, [selectedItem]);
 
     const changeColumnHeaders = (statusType) => {
         switch (statusType) {

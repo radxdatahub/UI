@@ -7,7 +7,7 @@ module.exports = {
         return [
             {
                 // Sets security headers for all routes
-                source: '/(.*)',
+                source: '/(.*)?',
                 headers: [
                     {
                         key: 'Permissions-Policy',

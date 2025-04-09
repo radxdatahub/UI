@@ -16,16 +16,17 @@ import PropTypes from 'prop-types';
  * @property {Function} handlePrevious - The onClick function for the previous page button
  * @property {Function} handleSave - The onClick function for the save button on validation step
  * @property {Boolean} isValidated - checks whether validation has already happened for a submission
+ * @property {Boolean} renderSave - whether to render the save button on validation step - dont do so if theres no files to take action on
  * @returns {JSX} DataIngestFormNavigation component
  */
 
 const DataIngestFormNavigation = (props) => {
-    const { activeStep, totalSteps, disabled, handleNextPage, handleSave, isValidated, handlePrevious } = props;
+    const { activeStep, totalSteps, disabled, handleNextPage, handleSave, isValidated, handlePrevious, renderSave } = props;
     return (
         <Row className={classes.buttonGroup}>
             <Col className={classes.previousButton}>
                 {renderPreviousButton(activeStep, handlePrevious)}
-                {renderSaveButton(activeStep, isValidated, handleSave)}
+                {renderSave && (renderSaveButton(activeStep, isValidated, handleSave))}
             </Col>
             <Col className={classes.nextButton}>{renderNextButton(activeStep, totalSteps, disabled, handleNextPage)}</Col>
         </Row>
@@ -39,6 +40,7 @@ DataIngestFormNavigation.propTypes = {
     handlePrevious: PropTypes.func,
     handleSave: PropTypes.func,
     isValidated: PropTypes.bool,
+    renderSave: PropTypes.bool,
     totalSteps: PropTypes.number,
 };
  

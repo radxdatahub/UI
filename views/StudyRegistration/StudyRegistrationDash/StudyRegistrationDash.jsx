@@ -1,3 +1,4 @@
+/* eslint-disable multiline-ternary */
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
@@ -9,7 +10,7 @@ import Upload from '../../../components/Upload/Upload';
 import CalloutBox from '../../../components/CalloutBox/CalloutBox';
 import useRest from '../../../lib/hooks/useRest';
 import { studyRegistrationTableColumns } from './constants';
-import { UPDATE_STUDY_REGISTRATION, UPLOAD_STUDY_REG } from '../../../constants/apiRoutes';
+import { UPLOAD_STUDY_REG, STUDY_DELETION, APPROVED_STUDY_FILES_DELETION } from '../../../constants/apiRoutes';
 import Sidebar from '../../../components/Sidebar/Sidebar';
 import CollapsibleSideBar from '../../../components/CollapsibleSideBar/CollapsibleSideBar';
 
@@ -20,13 +21,27 @@ import CollapsibleSideBar from '../../../components/CollapsibleSideBar/Collapsib
  */
 
 const StudyRegistrationDash = (props) => {
-    const { userRole, studies } = props;
+    const { userRole, studies, status } = props;
     const router = useRouter();
 
-    const defaultState = {
-        label: 'In Review',
-        value: 'In Review',
-    };
+    const menuItems = [
+        {
+            label: 'In Review',
+            value: 'In Review',
+        },
+        {
+            label: 'Pending DCC Input',
+            value: 'Pending DCC Input',
+        },
+        {
+            label: 'Approved',
+            value: 'Approved',
+        },
+    ];
+
+    // set active state
+    const defaultState = menuItems.find((x) => x.value === status);
+
     const [selectedItem, setSelectedItem] = useState(defaultState);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const handleViewSidebar = () => {
@@ -44,35 +59,10 @@ const StudyRegistrationDash = (props) => {
         );
     }, [selectedItem]);
 
-    const menuItems = [
-        {
-            label: 'In Review',
-            value: 'In Review',
-        },
-        {
-            label: 'Pending DCC Input',
-            value: 'Pending DCC Input',
-        },
-        {
-            label: 'Approved',
-            value: 'Approved',
-        },
-    ];
-
     const { restPost, restDelete } = useRest();
 
     const handleEdit = (userRole, id) => {
         router.push(`/${userRole}/editStudyRegistration?studyId=${id}`);
-    };
-
-    const handleDelete = async (id) => {
-        const uploadResult = await restDelete(`${UPDATE_STUDY_REGISTRATION}&studyId=${id}`, {
-            showLoading: true,
-            successMessage: `Study ${id} successfully deleted`,
-        });
-        if (uploadResult.status === 200) {
-            router.reload();
-        }
     };
 
     const handleAddStudy = async (e) => {
@@ -86,6 +76,28 @@ const StudyRegistrationDash = (props) => {
         if (uploadResult.status === 200) {
             router.reload();
         } else {
+            router.reload();
+        }
+    };
+
+    const handleDeleteStudy = async (id) => {
+        const deleteResult = await restDelete(`${STUDY_DELETION.replace(`[studyId]`, id)}`, {
+            showLoading: true,
+            showSuccess: true,
+            successMessage: `Study ${id} successfully deleted`,
+        });
+        if (deleteResult.status === 200) {
+            router.reload();
+        }
+    };
+
+    const handleDeleteStudyFiles = async (id) => {
+        const deleteResult = await restDelete(`${APPROVED_STUDY_FILES_DELETION.replace(`[studyId]`, id)}`, {
+            showLoading: true,
+            showSuccess: true,
+            successMessage: `Files for Study ${id} were successfully deleted`,
+        });
+        if (deleteResult.status === 200) {
             router.reload();
         }
     };
@@ -139,15 +151,23 @@ const StudyRegistrationDash = (props) => {
                         </div>
                     </Row>
                 )}
-                {userRole === 'dcc' && (
+                {userRole === 'dcc' && selectedItem.label === 'Pending DCC Input' ? (
                     <CalloutBox
                         className={classes.instructionsContainer}
                         body={<div>Please view a form by clicking an edit icon below.</div>}
                     />
+                ) : (
+                    <br />
                 )}
                 <Table
                     tableRows={studies}
-                    tableHeaders={studyRegistrationTableColumns(userRole, handleEdit, handleDelete, selectedItem)}
+                    tableHeaders={studyRegistrationTableColumns(
+                        userRole,
+                        handleEdit,
+                        handleDeleteStudy,
+                        handleDeleteStudyFiles,
+                        selectedItem
+                    )}
                     className={classes.tableContainer}
                     ariaCaption="Study Registration Dashboard"
                     responsive={false}

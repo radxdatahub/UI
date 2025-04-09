@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../../../components/Button/Button';
-import ExternalIcon from '../../../components/Images/svg/ExternalIcon';
 import classes from '../ResourceCenter.module.scss';
 
 /**
@@ -12,7 +10,7 @@ import classes from '../ResourceCenter.module.scss';
 
 const moreButtonClasses = `${classes.moreButton} ${classes.green}`;
 
-export const externalLinksCards = (router, baseUrl) => {
+export const externalLinksCards = (router, baseUrl, restGet) => {
     return [
         {
             title: 'National COVID Cohort Collaborative (N3C)',
@@ -28,16 +26,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://ncats.nih.gov/research/research-activities/n3c" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -55,16 +44,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://covid.cdc.gov/covid-data-tracker/#datatracker-home" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -82,16 +62,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://covid19serohub.nih.gov/" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -109,16 +80,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://opendata.ncats.nih.gov/covid19" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -136,16 +98,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://www.nlm.nih.gov/NIHbmic/nih_data_sharing_repositories.html" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -163,16 +116,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://cde.nlm.nih.gov/home" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -189,21 +133,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a
-                        // eslint-disable-next-line max-len
-                        href="https://cde.nlm.nih.gov/cde/search?selectedOrg=Project%205%20(COVID-19)&_gl=1*5olvp3*_ga*ODY4NDY2OTAxLjE2OTk5MDQxMTQ.*_ga_7147EPK006*MTcwNDgzNDc0NC42LjEuMTcwNDgzNTk4Mi4wLjAuMA..*_ga_P1FPTH9PL4*MTcwNDgzNDc0NC42LjEuMTcwNDgzNTk4Mi4wLjAuMA.."
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -220,20 +150,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a
-                        href="https://tools.niehs.nih.gov/dr2/index.cfm/main/detail/resource_id/24244"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -250,16 +167,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://radx-up.org/research/cdes/" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -276,16 +184,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://www.phenxtoolkit.org/collections/view/8" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                   
                 </span>
             ),
         },
@@ -302,20 +201,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a
-                        href="https://tools.niehs.nih.gov/dr2/index.cfm/main/search/#/params?selectedFacets=EXP_BIO_VI_COV&searchTerm="
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -334,16 +220,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://uts.nlm.nih.gov/uts/" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -360,16 +237,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://evsexplore.semantics.cancer.gov/evsexplore/welcome" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+                    
                 </span>
             ),
         },
@@ -387,16 +255,6 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://grants.nih.gov/funding/searchguideNew/index.html#/" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
                 </span>
             ),
         },
@@ -413,16 +271,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://grants.nih.gov/grants/guide/notice-files/NOT-OD-21-013.html" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+
                 </span>
             ),
         },
@@ -436,16 +285,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://www.ncbi.nlm.nih.gov/research/coronavirus/" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+
                 </span>
             ),
         },
@@ -459,16 +299,7 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://covid19.nih.gov/researcher-resources" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
+
                 </span>
             ),
         },
@@ -482,16 +313,6 @@ export const externalLinksCards = (router, baseUrl) => {
             ),
             footer: (
                 <span className={classes.resourceCardFooter}>
-                    <a href="https://youtube.com/@NIHRADxDataHub" target="_blank" rel="noopener noreferrer">
-                        <Button
-                            className={moreButtonClasses}
-                            label="More"
-                            variant="primary"
-                            iconRight={<ExternalIcon />}
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
                 </span>
             ),
         },

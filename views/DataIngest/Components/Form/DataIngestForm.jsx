@@ -58,6 +58,7 @@ const DataIngestForm = (props) => {
                         setActiveStep={setActiveStep}
                         totalSteps={totalSteps}
                         fileUploadSOP={fileUploadSOP}
+                        sftpKey={submissionData?.sftpKey}
                     />
                 );
                 break;
@@ -193,6 +194,7 @@ DataIngestForm.propTypes = {
         id: PropTypes.number,
         description: PropTypes.string,
         validated: PropTypes.bool,
+        sftpKey: PropTypes.string,
     }),
     submissionId: PropTypes.number,
     totalSteps: PropTypes.number,

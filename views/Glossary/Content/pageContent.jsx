@@ -68,7 +68,7 @@ export const contentArray = [
                         <span>
                             Individual/s from the RADx Support Team who assists data submissions to the RADx Data Hub, including answering
                             user questions, providing guidance on data de-identification, reviewing and approving study submissions, etc.
-                            Please contact the RADx Data Hub Administrator at RADx-DataHub@nih.gov to contact RADx curators.
+                            Please contact the RADx Data Hub Administrator to contact RADx curators.
                         </span>
                     </>
                 ),
@@ -124,7 +124,7 @@ export const contentArray = [
                             genotyping. The RADx Data Hub uses dbGaP to manage study-level access to data files. To learn how to request
                             access to a study in dbGaP, please review the{' '}
                             <a
-                                href="https://sharing.nih.gov/accessing-data/accessing-genomic-data/how-to-request-and-access-datasets-from-dbgap"
+                                href=""
                                 target="_blank"
                                 rel="noreferrer"
                             >

@@ -6,7 +6,6 @@ import classes from './Events.module.scss';
 import Banner from '../../components/Banner/Banner';
 import { getTypeIcon } from '../../lib/componentHelpers/EventsFunctions/getTypeIcon';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import parse from 'html-react-parser';
 import { regexReplace } from '../../lib/componentHelpers/ResourcePages/regexReplace';
 import { format } from 'date-fns';

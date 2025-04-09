@@ -53,7 +53,7 @@ export const overviewIntro = {
         },
         {
             title: 'The Features of the RADx Data Hub',
-            id: 'radx-features',
+            id: 'features',
             state: 'overviewIntro',
             content: (
                 <>

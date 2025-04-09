@@ -32,7 +32,7 @@ export const allVarCols = [
                 <a
                     target="_blank"
                     rel="noreferrer noopener"
-                    href={`https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=${row.original['dbGaP ID']}`}
+                    href=''
                 >
                     {row.original['dbGaP ID']}
                 </a>

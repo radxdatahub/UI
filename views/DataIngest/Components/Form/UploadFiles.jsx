@@ -32,11 +32,12 @@ import { useDispatch } from 'react-redux';
  * @property {Boolean} isSubmissionCreated - whether a submission has been created or not
  * @property {Number} subId - submissionID of the current submission - if it exists
  * @property {String} fileUploadSOP - The URL for the File Upload SOP.
+ * @property {String} sftpKey - The sftp key for this particular study
  * @returns {JSX} UploadFiles component
  */
 
 const UploadFiles = (props) => {
-    const { studies, uploadedFiles, isSubmissionCreated, subId, studySelected, activeStep, setActiveStep, totalSteps, fileUploadSOP } =
+    const { studies, uploadedFiles, isSubmissionCreated, subId, studySelected, activeStep, setActiveStep, totalSteps, fileUploadSOP, sftpKey } =
         props;
     const { register, getValues } = useForm({
         mode: 'onSubmit',
@@ -283,7 +284,7 @@ const UploadFiles = (props) => {
                         </Col>
                         <Col className="col-8">
                             <span className={classes.textContent}>
-                                <SftpModal variant="single" title="SFTP Upload Notice" fileUploadSOP={fileUploadSOP} /> (Recommended for
+                                <SftpModal variant="single" title="SFTP Upload Notice" fileUploadSOP={fileUploadSOP} sftpKey={sftpKey} /> (Recommended for
                                 uploads over 250 MB)
                             </span>
                         </Col>
@@ -321,6 +322,7 @@ UploadFiles.propTypes = {
     fileUploadSOP: PropTypes.string.isRequired,
     isSubmissionCreated: PropTypes.bool,
     setActiveStep: PropTypes.func,
+    sftpKey: PropTypes.string,
     studies: PropTypes.arrayOf(
         PropTypes.shape({
             studyId: PropTypes.number,

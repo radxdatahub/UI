@@ -11,7 +11,7 @@ export async function getServerSideProps(context) {
 
     logger.defaultMeta.service = 'Homepage';
 
-    let funding, news, events, stats, contentUpdates;
+    let funding = [], news = [], events = [], stats = [], contentUpdates = [];
 
     // GET Funding
     logger.info('Calling GET_FUNDING: %s', GET_FUNDING);
@@ -24,7 +24,7 @@ export async function getServerSideProps(context) {
         });
         funding = searchResponse.data;
     } catch (e) {
-        logger.error(`No cookies provided or call failed: ${e}`);
+        logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
     }
 
     // GET News
@@ -38,7 +38,7 @@ export async function getServerSideProps(context) {
         });
         news = searchResponse.data;
     } catch (e) {
-        logger.error(`No cookies provided or call failed: ${e}`);
+        logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
     }
 
     // GET Events
@@ -52,7 +52,7 @@ export async function getServerSideProps(context) {
         });
         events = searchResponse.data;
     } catch (e) {
-        logger.error(`No cookies provided or call failed: ${e}`);
+        logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
     }
 
     // GET Stats
@@ -66,7 +66,7 @@ export async function getServerSideProps(context) {
         });
         stats = searchResponse.data;
     } catch (e) {
-        logger.error(`No cookies provided or call failed: ${e}`);
+        logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
     }
 
     // GET Content Updates
@@ -80,7 +80,7 @@ export async function getServerSideProps(context) {
         });
         contentUpdates = searchResponse.data;
     } catch (e) {
-        logger.error(`No cookies provided or call failed: ${e}`);
+        logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
     }
 
     return {
@@ -89,7 +89,8 @@ export async function getServerSideProps(context) {
             news,
             events,
             stats,
-            contentUpdates
+            contentUpdates,
+            pageTitle: 'Homepage',
         },
     };
 }

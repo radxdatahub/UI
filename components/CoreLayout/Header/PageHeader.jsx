@@ -2,13 +2,13 @@
 import React, { useState } from 'react';
 import classes from './PageHeader.module.scss';
 import { Col, Row, Dropdown, Nav, Navbar, NavItem, NavLink } from 'react-bootstrap';
-import NIHLogo from '../../Images/svg/NIHLogo';
 import Button from '../../Button/Button';
 import LoginIcon from '../../Images/svg/LoginIcon';
 import InfoIcon from '../../Images/svg/InfoIcon';
 import Link from 'next/link';
 import LoginModal from './Components/LoginModal';
 import LogoutModal from './Components/LogoutModal';
+import UserProfileModal from '../../../views/UserProfile/UserProfileModal';
 import { useRouter } from 'next/router';
 
 /**
@@ -19,29 +19,36 @@ import { useRouter } from 'next/router';
  */
 
 const PageHeader = (props) => {
-    const { userProfile } = props;
-
+    const { userProfile } = props;    
     const router = useRouter();
     const [loginVisible, setLoginVisible] = useState(false);
     const [logoutVisible, setLogoutVisible] = useState(false);
+    const [userProfileVisible, setUserProfileVisible] = useState(false);
+   
     const closeLoginModal = () => {
         setLoginVisible(false);
     };
     const closeLogoutModal = () => {
         setLogoutVisible(false);
     };
+    const closeUserProfileModal = () => {
+        setUserProfileVisible(false);
+    };    
 
     const LoginParams = [
         {
             name: userProfile?.firstName,
-            dropdown: [{ name: 'Logout', link: '' }],
+            dropdown: [{ name: 'Edit Profile', link: '' }, { name: 'Logout', link: '' }],
         },
     ];
 
     const dropDownList = [
-        <Dropdown.Item key={'logout'} className={classes.dropdownItem} eventKey={'logout'} onClick={() => setLogoutVisible(true)}>
-            Logout
+        <Dropdown.Item key={'editProfile'} className={classes.dropdownItem} eventKey={'editProfile'} onClick={() => setUserProfileVisible(true)}>
+            Edit Profile
         </Dropdown.Item>,
+        <Dropdown.Item key={'logout'} className={classes.dropdownItem} eventKey={'logout'} onClick={() => setLogoutVisible(true)}>
+        Logout
+    </Dropdown.Item>,
     ];
 
     return (
@@ -63,12 +70,17 @@ const PageHeader = (props) => {
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu className={classes.dropdown}>{dropDownList}</Dropdown.Menu>
                             </Dropdown>
-                        ))
+                        ))                        
                     ) : (
                         <Button label="Login" iconRight={<LoginIcon />} variant="login" handleClick={() => setLoginVisible(true)} />
                     )}
                 </Col>
-                <LoginModal visible={loginVisible} closeModal={closeLoginModal} />
+                <LoginModal visible={loginVisible} closeModal={closeLoginModal} />                
+                <UserProfileModal
+                visible={userProfileVisible}
+                closeModal={closeUserProfileModal}                         
+                userId={userProfile?.id}               
+                />
                 <LogoutModal visible={logoutVisible} closeModal={closeLogoutModal} />
             </Row>
         </>

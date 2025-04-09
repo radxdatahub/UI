@@ -12,10 +12,13 @@ import Select from '../../components/Select/Select';
 import Button from '../../components/Button/Button';
 import DownloadIcon from '../../components/Images/svg/DownloadIcon';
 import CollapsibleSideBar from '../../components/CollapsibleSideBar/CollapsibleSideBar';
+import VariablesModal from './Components/VariablesModal';
 import { menuItems, timeDropdownOptions } from './Constants/MetricsConstants';
 import { useRouter } from 'next/router';
 import { format, parse } from 'date-fns';
 import Cookies from 'js-cookie';
+import useRest from '../../lib/hooks/useRest';
+import { downloadLink } from '../../lib/pageHelpers/downloadLink';
 
 // The best way to handle a simple repetitive page like this is probably with a few components that get reused a lot.
 /**
@@ -34,6 +37,8 @@ import Cookies from 'js-cookie';
 const Metrics = (props) => {
     const { tableRows, totalRow, tableColumns, reportType, aggregations, reportIDs, initData, redirectString, CSV_URL } = props;
     const router = useRouter();
+    const { restGet } = useRest();
+
     const crumbs = [
         {
             page: 'Home',
@@ -45,6 +50,13 @@ const Metrics = (props) => {
         },
     ];
     const [currentAggregate, setAggregate] = useState(initData?.aggregate || undefined);
+
+    // Variables Modal
+    const [variablesModalVisible, setVariablesModalVisible] = useState(false);
+    const closeVariablesModal = () => {
+        setVariablesModalVisible(false);
+    };
+    const [variablesList, setVariablesList] = useState('');
 
     // for side bar
     const [sidebarOpen, setSideBarOpen] = useState(true);
@@ -177,22 +189,22 @@ const Metrics = (props) => {
                                                 label="Filter By Date"
                                                 required
                                                 labelClass={classes.label}/>
-                                            {time === 'Custom' && (<DatePicker fromMonth={new Date(2022, 11)} selectedDays={selectedDays} setSelectedDays={setSelectedDays} type="Range" />)}
+                                            {time === 'Custom' && (<DatePicker fromMonth={new Date(2019, 11)} selectedDays={selectedDays} setSelectedDays={setSelectedDays} type="Range" />)}
                                         </>)}
 
                                 <Button label="Generate Report" handleClick={() => {
                                     handleClick();
                                 }} variant="primary" className={`${classes.button} ml-2`} />
-                                <a href={`${CSV_URL}&sessionId=${Cookies.get('chocolateChip')}`} download className={classes.forceRight}>
-                                    <Button
-                                        variant="secondary"
-                                        label="Download CSV"
-                                        className={`${classes.button}`}
-                                        disabled={!(tableColumns.length > 0)}
-                                        iconLeft={<DownloadIcon />}
-                                    />
-                                </a>
-                            
+                                <Button
+                                    variant="secondary"
+                                    label="Download CSV"
+                                    className={`${classes.button} ${classes.forceRight}`}
+                                    disabled={!(tableColumns.length > 0)}
+                                    iconLeft={<DownloadIcon />}
+                                    handleClick={async () => {
+                                        downloadLink(`${CSV_URL}&sessionId=${Cookies.get('chocolateChip')}`, restGet);
+                                    }}
+                                />
                             </div>
                         </Row>
                         <Row className={classes.row}>
@@ -200,9 +212,9 @@ const Metrics = (props) => {
                                 <Table
                                     tableRows={tableRows}
                                     allowSort
-                                    tableHeaders={createMetricsColumns(tableColumns, classes)}
+                                    tableHeaders={createMetricsColumns(tableColumns, setVariablesList, setVariablesModalVisible, classes)}
                                     className={classes.tableContainer}
-                                    ariaCaption="Support Tracker View"
+                                    ariaCaption="Metrics Table"
                                     responsive={false}
                                     totalRow={totalRow}
                                     noHover
@@ -212,6 +224,11 @@ const Metrics = (props) => {
                     </div>
                 </Col>
             </Row>
+            <VariablesModal
+                visible={variablesModalVisible}
+                closeModal={closeVariablesModal}
+                variablesList={variablesList}
+            />
         </>
     );
 };

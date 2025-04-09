@@ -2,10 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import Button from '../../../components/Button/Button';
-import DownloadIcon from '../../../components/Images/svg/DownloadIcon';
 import classes from '../ResourceCenter.module.scss';
-import { GET_RESOURCE_CENTER_BUCKET } from '../../../constants/apiRoutes';
-import { sendGAEvent } from '@next/third-parties/google';
 
 /**
  * General Resource Cards
@@ -16,7 +13,7 @@ import { sendGAEvent } from '@next/third-parties/google';
 const moreButtonClasses = `${classes.moreButton} ${classes.navyBlue}`;
 const downloadButtonClasses = `${classes.downloadButton} ${classes.navyBlue}`;
 
-export const generalCards = (router, baseUrl) => {
+export const generalCards = (router, baseUrl, restGet) => {
     return [
         {
             title: 'Learn About',
@@ -32,7 +29,7 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <Link href="/about">
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
+                        <Button className={moreButtonClasses} label="View Page" variant="primary" size="auto" rounded="lite" />
                     </Link>
                 </span>
             ),
@@ -51,7 +48,7 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <Link href="/fundingOpportunities">
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
+                        <Button className={moreButtonClasses} label="View Page" variant="primary" size="auto" rounded="lite" />
                     </Link>
                 </span>
             ),
@@ -67,7 +64,7 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <Link href="/news">
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
+                        <Button className={moreButtonClasses} label="View Page" variant="primary" size="auto" rounded="lite" />
                     </Link>
                 </span>
             ),
@@ -86,7 +83,7 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <Link href="/events">
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
+                        <Button className={moreButtonClasses} label="View Page" variant="primary" size="auto" rounded="lite" />
                     </Link>
                 </span>
             ),
@@ -105,25 +102,6 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <div className={classes.footerEnd}>
-                        <a
-                            href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-List_of_Publications.xlsx`}
-                            download
-                            onClick={() =>
-                                sendGAEvent('event', 'resourceCenter', {
-                                    value: 'Download',
-                                    file: 'RADx_Data_Hub-List_of_Publications.xlsx',
-                                })
-                            }
-                        >
-                            <Button
-                                className={downloadButtonClasses}
-                                label="XLSX (96KB)"
-                                iconLeft={<DownloadIcon />}
-                                variant="primary"
-                                size="auto"
-                                rounded="lite"
-                            />
-                        </a>
                     </div>
                 </span>
             ),
@@ -142,25 +120,6 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <div className={classes.footerEnd}>
-                        <a
-                            href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-Code_of_Conduct.pdf`}
-                            download
-                            onClick={() =>
-                                sendGAEvent('event', 'resourceCenter', {
-                                    value: 'Download',
-                                    file: 'RADx_Data_Hub-Code_of_Conduct.pdf',
-                                })
-                            }
-                        >
-                            <Button
-                                className={downloadButtonClasses}
-                                label="PDF (112KB)"
-                                iconLeft={<DownloadIcon />}
-                                variant="primary"
-                                size="auto"
-                                rounded="lite"
-                            />
-                        </a>
                     </div>
                 </span>
             ),
@@ -180,27 +139,8 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <Link href="/faq">
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
+                        <Button className={moreButtonClasses} label="View Page" variant="primary" size="auto" rounded="lite" />
                     </Link>
-                    <a
-                        href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-FAQ.pdf`}
-                        download
-                        onClick={() =>
-                            sendGAEvent('event', 'resourceCenter', {
-                                value: 'Download',
-                                file: 'RADx_Data_Hub-FAQ.pdf',
-                            })
-                        }
-                    >
-                        <Button
-                            className={downloadButtonClasses}
-                            label="PDF (522KB)"
-                            iconLeft={<DownloadIcon />}
-                            variant="primary"
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
                 </span>
             ),
         },
@@ -218,27 +158,8 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <Link href="/glossary">
-                        <Button className={moreButtonClasses} label="More" variant="primary" size="auto" rounded="lite" />
+                        <Button className={moreButtonClasses} label="View Page" variant="primary" size="auto" rounded="lite" />
                     </Link>
-                    <a
-                        href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-Glossary.pdf`}
-                        download
-                        onClick={() =>
-                            sendGAEvent('event', 'resourceCenter', {
-                                value: 'Download',
-                                file: 'RADx_Data_Hub-Glossary.pdf',
-                            })
-                        }
-                    >
-                        <Button
-                            className={downloadButtonClasses}
-                            label="PDF (433KB)"
-                            iconLeft={<DownloadIcon />}
-                            variant="primary"
-                            size="auto"
-                            rounded="lite"
-                        />
-                    </a>
                 </span>
             ),
         },
@@ -253,25 +174,6 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <div className={classes.footerEnd}>
-                        <a
-                            href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-Content_Report.xlsx`}
-                            download
-                            onClick={() =>
-                                sendGAEvent('event', 'resourceCenter', {
-                                    value: 'Download',
-                                    file: 'RADx_Data_Hub-Content_Report.xlsx',
-                                })
-                            }
-                        >
-                            <Button
-                                className={downloadButtonClasses}
-                                label="XLSX (49KB)"
-                                iconLeft={<DownloadIcon />}
-                                variant="primary"
-                                size="auto"
-                                rounded="lite"
-                            />
-                        </a>
                     </div>
                 </span>
             ),
@@ -287,25 +189,6 @@ export const generalCards = (router, baseUrl) => {
             footer: (
                 <span className={classes.resourceCardFooter}>
                     <div className={classes.footerEnd}>
-                        <a
-                            href={`${baseUrl}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub_File_Organization.pdf`}
-                            download
-                            onClick={() =>
-                                sendGAEvent('event', 'resourceCenter', {
-                                    value: 'Download',
-                                    file: 'RADx_Data_Hub_File_Organization.pdf',
-                                })
-                            }
-                        >
-                            <Button
-                                className={downloadButtonClasses}
-                                label="PDF (266KB)"
-                                iconLeft={<DownloadIcon />}
-                                variant="primary"
-                                size="auto"
-                                rounded="lite"
-                            />
-                        </a>
                     </div>
                 </span>
             ),

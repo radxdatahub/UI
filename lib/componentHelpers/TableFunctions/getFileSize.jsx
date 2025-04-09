@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
  */
 
 export const getFileSize = (fileSize, recursed) => {
-    const size = Number(fileSize) / 1000;
+    const size = Number(fileSize) / 1024;
 
-    if (size < 1000) {
+    if (size < 1024) {
         const formattedSize = (Math.round(size * 100) / 100).toFixed(2);
         switch (recursed) {
             case 0:

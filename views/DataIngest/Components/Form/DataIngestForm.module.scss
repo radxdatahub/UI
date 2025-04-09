@@ -369,3 +369,34 @@
     vertical-align: middle;
     padding-left: 25px;
 }
+
+.validAccordion {
+    font-family: $primary-family;
+    background: transparent;
+}
+
+.branchIcon {
+    vertical-align: baseline;
+    width: 25%;
+    margin-right: auto;
+    padding-right: 0 !important;
+    float: left;
+}
+
+.fileName {
+    vertical-align: middle;
+    margin-top: 5px;
+    width: 92%;
+    float: right;
+    overflow-x: wrap;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+}
+
+.noWarnings {
+    font-weight: 700;
+}

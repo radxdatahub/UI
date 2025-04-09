@@ -41,7 +41,8 @@ export async function getServerSideProps(context) {
         props: {
             studiesData,
             categoriesData,
-            fileUploadSOP: `${process.env.DEV_URL}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-File_Upload_SOP.pdf`,
+            fileUploadSOP: `${process.env.DEV_URL}${GET_RESOURCE_CENTER_BUCKET}File_Upload_SOP.pdf`,
+            pageTitle: 'Data Submission'
         },
     };
 }

@@ -16,6 +16,7 @@ import DownloadIcon from '../../../../components/Images/svg/DownloadIcon';
 import QueryBuilder from '../../../../components/QueryBuilder/QueryBuilder';
 import { generateQueryFields } from '../../../../lib/componentHelpers/QueryBuilderFunctions/generateQueryFields';
 import { sendGAEvent } from '@next/third-parties/google';
+import { downloadLink } from '../../../../lib/pageHelpers/downloadLink';
 
 /**
  * Search Actions Component -> Search Bar, View Toggle, Pagination, Result Numbers, Per Page, Sorting, Column Picker
@@ -36,6 +37,7 @@ import { sendGAEvent } from '@next/third-parties/google';
  * @property {Function} setAdvancedQuery - The useState setter for the current Advanced Search Query.
  * @property {Boolean} hasResults - tells this component and it's children if results were found in the last search made.  Used for hiding certain actions.
  * @property {String} CSV_URL - URL for the CSV download of the current result
+ * @property {Function} restGet - REST api for download
  * @property {Array} tableColumns - Table columns to be passed into ColumnPicker component
  * @property {Function} setColumnVisibility - Set state functional to be passed into ColumnPicker component
  * @property {Object} columnVisibility - Visibility list for columns to be passed into ColumnPicker component
@@ -62,6 +64,7 @@ const SearchActions = (props) => {
         setAdvancedQuery,
         hasResults,
         CSV_URL,
+        restGet,
         tableColumns,
         setColumnVisibility,
         columnVisibility,
@@ -89,8 +92,8 @@ const SearchActions = (props) => {
                             </div>
                         </div>
                     </Row>
-                    <Row>
-                        <div>
+                    <Row className="mb-4">
+                        {/* <div>
                             <Button
                                 label={
                                     <div>
@@ -122,7 +125,7 @@ const SearchActions = (props) => {
                                     </div>
                                 </Row>
                             </>
-                        )}
+                        )} */}
                     </Row>
                     <div className={`${classes.buttonAndToggle} ${classes.mobile}`}>
                         <SearchResultViewToggle setView={toggleView} view={view} />
@@ -146,25 +149,21 @@ const SearchActions = (props) => {
                 {!resultFooter && hasResults && (
                     <div className={`${classes.searchActions} ${classes.right}`}>
                         <div className={`${classes.tableFunctionButtonContainer}`}>
-                            <a
-                                href={CSV_URL}
-                                download
-                                onClick={() =>
+                            <Button
+                                className={`${classes.tableFunctionButton} ${classes.download}`}
+                                label="Download Results"
+                                ariaLabel="Download Results into an Excel Spreadsheet"
+                                variant="tertiary"
+                                iconLeft={<DownloadIcon fill="black" />}
+                                size="auto"
+                                rounded="lite"
+                                handleClick={async () => {
+                                    downloadLink(CSV_URL, restGet);
                                     sendGAEvent('event', 'studyExplorer', {
                                         value: 'Download Results',
-                                    })
-                                }
-                            >
-                                <Button
-                                    className={`${classes.tableFunctionButton} ${classes.download}`}
-                                    label="Download Results"
-                                    ariaLabel="Download Results into an Excel Spreadsheet"
-                                    variant="tertiary"
-                                    iconLeft={<DownloadIcon fill="black" />}
-                                    size="auto"
-                                    rounded="lite"
-                                />
-                            </a>
+                                    });
+                                }}
+                            />
                             {view === 'table' && (
                                 <ColumnPicker
                                     className={classes.columnPickerButton}
@@ -206,6 +205,7 @@ SearchActions.propTypes = {
     }).isRequired,
     propertyList: PropTypes.object,
     query: PropTypes.string,
+    restGet: PropTypes.func,
     resultFooter: PropTypes.bool,
     setAdvancedQuery: PropTypes.func,
     setColumnVisibility: PropTypes.func,

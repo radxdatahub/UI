@@ -7,6 +7,7 @@ import Banner from '../../components/Banner/Banner';
 import Link from 'next/link';
 import parse from 'html-react-parser';
 import { regexReplace } from '../../lib/componentHelpers/ResourcePages/regexReplace';
+import { format } from 'date-fns';
 
 /**
  * View for the News Article Page
@@ -24,12 +25,15 @@ const NewsArticle = (props) => {
             ariaLabel: 'home',
         },
         {
-            page: 'News',
+            page: 'Latest News & Updates',
             pageLink: '/news',
-            ariaLabel: 'news',
+            ariaLabel: 'Latest News & Updates',
         },
         {
-            page: newsArticleData.title,
+            page: newsArticleData.slug
+                .split('-')
+                .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+                .join(' '),
         },
     ];
 
@@ -46,6 +50,8 @@ const NewsArticle = (props) => {
                 <Row className={`${classes.Row} whiteTextBackground`}>
                     {Object.keys(newsArticleData).length > 0 && (
                         <div key={newsArticleData.title} className={classes.section}>
+                            <h5>{newsArticleData.title} | {format(new Date(newsArticleData.startDate), 'P')}</h5>
+                            <hr className={classes.separator} />
                             <div>{parse(regexReplace(newsArticleData.description, newsArticleData.links))}</div>
                         </div>
                     )}

@@ -8,11 +8,13 @@ import DownloadIcon from '../../components/Images/svg/DownloadIcon';
 import { useRouter } from 'next/router';
 import Banner from '../../components/Banner/Banner';
 import Form from 'react-bootstrap/Form';
-import { GET_VARIABLE_REPORT } from '../../constants/apiRoutes';
+import { GET_VARIABLE_REPORT, TEST_DOWNLOAD } from '../../constants/apiRoutes';
+import { downloadLink } from '../../lib/pageHelpers/downloadLink';
 import SearchTable from './Components/VariablesSearchTable';
 import { allVarCols } from './Misc/AllVariablesTableHelpers';
 import { createCoreVarTable } from './Misc/CoreVariablesTableHelpers';
 import CalloutBox from '../../components/CalloutBox/CalloutBox';
+import useRest from '../../lib/hooks/useRest';
 
 /**
  * View for Variables Catalog page
@@ -26,6 +28,7 @@ import CalloutBox from '../../components/CalloutBox/CalloutBox';
 
 const VariablesCatalog = (props) => {
     const { coreData, allData, date, baseUrl } = props;
+    const { restGet } = useRest();
     const [view, setView] = useState('all');
 
     const options = {
@@ -57,32 +60,37 @@ const VariablesCatalog = (props) => {
     return (
         <>
             <Banner title="Variables Catalog" path={router.asPath} variant="virus6" ariaLabel="Variables Catalog" />
-            <Container className={`${classes.Container}`}>         
+            <Container className={`${classes.Container}`}>
                 <CalloutBox
                     className={classes.instructionsContainer}
                     body={
-                         <div className={classes.instructions}>
+                        <div className={classes.instructions}>
                             <div>
-                            The Variables Catalog displays variables contained in study data files submitted by the RADx programs as a comma-separated list. With the Variables Catalog, you can quickly understand a study’s variables to make a more informed decision when requesting study data access.
+                                The Variables Catalog displays variables contained in study data files submitted by the RADx programs as a
+                                comma-separated list. With the Variables Catalog, you can quickly understand a study’s variables to make a
+                                more informed decision when requesting study data access.
                             </div>
                         </div>
                     }
-                />                       
+                />
 
                 <div className={`${classes.section} whiteTextBackground`}>
-                   <p className={classes.downloadText}>To get a complete Data Variable Report with multiple views of the RADx data variables, including per-variable frequency counts and dbGaP (PHS) IDs:</p>
+                    <p className={classes.downloadText}>
+                        To get a complete Data Variable Report with multiple views of the RADx data variables, including per-variable
+                        frequency counts and dbGaP (PHS) IDs:
+                    </p>
                     <div className={classes.downloadContainer}>
-                        <a href={`${baseUrl}${GET_VARIABLE_REPORT}`} download>
-                            <Button
-                                className={classes.download}
-                                label="Download Complete Report in Excel "
-                                variant="primary"
-                                iconRight={<DownloadIcon />}
-                                size="auto"
-                                rounded="lite"
-                                handleClick={() => {}}
-                            />
-                        </a>
+                        <Button
+                            className={classes.download}
+                            label="Download Complete Report in Excel "
+                            variant="primary"
+                            iconRight={<DownloadIcon />}
+                            size="auto"
+                            rounded="lite"
+                            handleClick={async () => {
+                                downloadLink(`${baseUrl}${GET_VARIABLE_REPORT}`, restGet);
+                            }}
+                        />
                     </div>
                 </div>
 

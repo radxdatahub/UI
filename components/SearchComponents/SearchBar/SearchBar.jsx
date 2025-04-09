@@ -25,6 +25,11 @@ const SearchBar = (props) => {
 
     const [autocomplete, setAutocomplete] = useState([]);
     const [openDropdown, setOpenDropdown] = useState(false);
+    /*
+     * we need to save the state of what the user typed beforehand so we know what to show in the bar after we
+     * mouse out of the auotcomplete list
+     */
+    const [oldQuery, setOldQuery] = useState('');
 
     const { restGet } = useRest();
 
@@ -45,6 +50,7 @@ const SearchBar = (props) => {
     // once 3 characters have been typed we want to get autocomplete results
     const handleChange = (e) => {
         setQuery(e.target.value);
+        setOldQuery(query);
         if (e.target.value.length >= 3) {
             autocompleteSuggestions();
         } else {
@@ -60,16 +66,13 @@ const SearchBar = (props) => {
         }
     };
 
-    // if the user clicks an item in the autocomplete dropdown, first populate the text input
-    // then run the query with that phrase
-    // this is passed as the onClick prop to Autocomplete component
+    // if the user clicks an item in the autocomplete dropdown, populate the text input
     const handleItemClick = (value) => {
         setQuery(value);
-        handleClick(homePage ? query : undefined, true, false, true);
+        setOldQuery(query);
     };
 
     return (
-
         <div className={classes.searchBar}>
             <AutocompleteInput
                 id="search-bar"
@@ -84,6 +87,7 @@ const SearchBar = (props) => {
                 openDropdown={openDropdown}
                 setOpenDropdown={setOpenDropdown}
                 placeholder={`Search for ${topic}...`}
+                oldQuery={oldQuery}
             />
             <Button
                 className={classes.searchButton}

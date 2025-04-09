@@ -12,10 +12,10 @@ import ExternalLinkIcon from '../../components/ExternalLinkIcon/ExternalLinkIcon
 import NewStudiesIcon from '../../components/Images/svg/NewStudiesIcon';
 import NewFilesIcon from '../../components/Images/svg/NewFilesIcon';
 import UpdatedFilesIcon from '../../components/Images/svg/UpdatedFilesIcon';
-import RADxUpStatIcon from '../../components/Images/svg/RADxUpStatIcon';
-import RADxRadStatIcon from '../../components/Images/svg/RADxRadStatIcon';
-import RADxTechStatIcon from '../../components/Images/svg/RADxTechStatIcon';
-import RADxDHTStatIcon from '../../components/Images/svg/RADxDHTStatIcon';
+import Program1StatIcon from '../../components/Images/svg/Program1StatIcon';
+import Program2StatIcon from '../../components/Images/svg/Program2StatIcon';
+import Program3StatIcon from '../../components/Images/svg/Program3StatIcon';
+import Program4StatIcon from '../../components/Images/svg/Program4StatIcon';
 import { getTypeIcon } from '../../lib/componentHelpers/EventsFunctions/getTypeIcon';
 import { useRouter } from 'next/router';
 import parse from 'html-react-parser';
@@ -60,25 +60,29 @@ const Homepage = (props) => {
 
     // Search Bar
     const [query, setQuery] = useState('');
+    const [sorting, setSorting] = useState({
+        sort: 'desc',
+        field: 'relevance',
+    });
 
     const handleSearch = (query) => {
         sendGAEvent('event', 'homePage', { value: 'Home Page Search Made', query: JSON.stringify(query) });
-        const searchQuery = buildSearchQuery({ query, pagination: { size: 50, page: 1 } });
+        const searchQuery = buildSearchQuery({ query, pagination: { size: 50, page: 1 }, sorting, setSorting });
         router.push(`/studyExplorer?${searchQuery}`);
     };
 
     // STATS
 
     const getStat = (dcc) => {
-        return stats.dtos.find((obj) => {
+        return stats?.dtos?.find((obj) => {
             return obj.name === dcc;
         });
     };
 
-    const up = getStat('RADx-UP');
-    const rad = getStat('RADx-rad');
-    const tech = getStat('RADx Tech');
-    const dht = getStat('RADx DHT');
+    const prog1 = getStat('');
+    const prog2 = getStat('');
+    const prog3 = getStat('');
+    const prog4 = getStat('');
 
     // FUNDING, NEWS, EVENTS
 
@@ -86,11 +90,11 @@ const Homepage = (props) => {
         return (
             <div key={item.title}>
                 <h6>
-                    <Link href={`fundingOpportunities#${item.slug}`} legacyBehavior>
+                    <a href={item.linkUrl} target="_blank" rel="noopener noreferrer">
                         {item.title}
-                    </Link>
+                    </a>
                 </h6>
-                <div>{parse(regexReplace(item.description, item.links))}</div>
+                <div>{item.description}</div>
             </div>
         );
     });
@@ -101,7 +105,8 @@ const Homepage = (props) => {
                 <h6>
                     <Link href={`news/${item.slug}`} legacyBehavior>
                         {item.title}
-                    </Link>
+                    </Link>{' '}
+                    | {format(new Date(item.startDate), 'P')}
                 </h6>
                 <div>{parse(regexReplace(item.description, item.links))}</div>
             </div>
@@ -129,9 +134,9 @@ const Homepage = (props) => {
 
     // CONTENT UPDATES
 
-    const newStudies = contentUpdates.newStudies;
-    const newFiles = contentUpdates.newFiles;
-    const updatedFiles = contentUpdates.updatedFiles;
+    const newStudies = contentUpdates?.newStudies;
+    const newFiles = contentUpdates?.newFiles;
+    const updatedFiles = contentUpdates?.updatedFiles;
 
     // get number of categories that have a non-empty list
     const numOfContentCategories = Object.values(contentUpdates).filter((v) => v.length > 0).length;
@@ -233,7 +238,7 @@ const Homepage = (props) => {
                                 }
                                 variant="blog"
                                 image={{
-                                    src: '/images/New_RADx_Img.jpeg',
+                                    src: '/images/New_User_Img.jpeg',
                                     alt: 'This is a caption for the Image',
                                     width: '320px',
                                     height: '170px',
@@ -326,7 +331,7 @@ const Homepage = (props) => {
                     <Col md={12} lg={12}>
                         <Card
                             cardClassOverride={classes.infoCard}
-                            title="News"
+                            title="Latest News &amp; Updates"
                             footer={
                                 <Link href="/news">
                                     <Button label="View All" variant="homepage" size="auto" iconRight={<ChevronRightIcon />} />
@@ -370,27 +375,24 @@ const Homepage = (props) => {
                                     <Col md={6} sm={12}>
                                         <div className={classes.stat}>
                                             <h1 className={`${classes.statTitle} ${classes.pink}`}>
-                                                <a href="https://radx-up.org/" target="_blank" rel="noopener noreferrer">
-                                                    {up.name}
-                                                </a>
-                                                <ExternalLinkIcon width="15" height="15" />
+                                                {prog1?.name}
                                             </h1>
                                             <div className={`${classes.dccDescription} ${classes.gray}`}>
                                                 Studying COVID-19 testing patterns in underserved populations.
                                             </div>
                                             <div className={classes.statMiddleContent}>
-                                                <RADxUpStatIcon />
+                                                <Program1StatIcon />
                                                 <div className={classes.statMiddleContentText}>
-                                                    <p className={classes.gray} data-testid="UP-dataFiles">
-                                                        {up.dataFileCount} Data Files{' '}
+                                                    <p className={classes.gray} data-testid="p1-dataFiles">
+                                                        {prog1?.dataFileCount} Data Files{' '}
                                                     </p>
-                                                    <p className={classes.gray} data-testid="UP-documents">
-                                                        {up.documentCount} Documents
+                                                    <p className={classes.gray} data-testid="p1-documents">
+                                                        {prog1?.documentCount} Documents
                                                     </p>
                                                 </div>
                                             </div>
-                                            <h1 className={`${classes.statBottomContent}`} data-testid="UP-studies">
-                                                {up.studyCount} Studies
+                                            <h1 className={`${classes.statBottomContent}`} data-testid="p1-studies">
+                                                {prog1?.studyCount} Studies
                                             </h1>
                                         </div>
                                     </Col>
@@ -398,27 +400,24 @@ const Homepage = (props) => {
                                     <Col md={6} sm={12}>
                                         <div className={classes.stat}>
                                             <h1 className={`${classes.statTitle} ${classes.blue}`}>
-                                                <a href="https://www.radxrad.org/" target="_blank" rel="noopener noreferrer">
-                                                    {rad.name}
-                                                </a>
-                                                <ExternalLinkIcon width="15" height="15" />
+                                                {prog2?.name}
                                             </h1>
                                             <div className={`${classes.dccDescription} ${classes.gray}`}>
                                                 Supporting innovative, non-traditional (radical) COVID-19 diagnostic approaches.
                                             </div>
                                             <div className={classes.statMiddleContent}>
-                                                <RADxRadStatIcon />
+                                                <Program2StatIcon />
                                                 <div className={classes.statMiddleContentText}>
-                                                    <p className={classes.gray} data-testid="Rad-dataFiles">
-                                                        {rad.dataFileCount} Data Files{' '}
+                                                    <p className={classes.gray} data-testid="p2-dataFiles">
+                                                        {prog2?.dataFileCount} Data Files{' '}
                                                     </p>
-                                                    <p className={classes.gray} data-testid="Rad-documents">
-                                                        {rad.documentCount} Documents
+                                                    <p className={classes.gray} data-testid="p2-documents">
+                                                        {prog2?.documentCount} Documents
                                                     </p>
                                                 </div>
                                             </div>
-                                            <h1 className={`${classes.statBottomContent}`} data-testid="Rad-studies">
-                                                {rad.studyCount} Studies
+                                            <h1 className={`${classes.statBottomContent}`} data-testid="p2-studies">
+                                                {prog2?.studyCount} Studies
                                             </h1>
                                         </div>
                                     </Col>
@@ -428,31 +427,24 @@ const Homepage = (props) => {
                                     <Col md={6} sm={12}>
                                         <div className={classes.stat}>
                                             <h1 className={`${classes.statTitle} ${classes.purple}`}>
-                                                <a
-                                                    href="https://www.nibib.nih.gov/covid-19/radx-tech-program"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    {tech.name}
-                                                </a>
-                                                <ExternalLinkIcon width="15" height="15" />
+                                                {prog3?.name}
                                             </h1>
                                             <div className={`${classes.dccDescription} ${classes.gray}`}>
                                                 Speeding the development, validation, and commercialization of COVID-19 tests.
                                             </div>
                                             <div className={classes.statMiddleContent}>
-                                                <RADxTechStatIcon />
+                                                <Program3StatIcon />
                                                 <div className={classes.statMiddleContentText}>
-                                                    <p className={classes.gray} data-testid="Tech-dataFiles">
-                                                        {tech.dataFileCount} Data Files{' '}
+                                                    <p className={classes.gray} data-testid="p3-dataFiles">
+                                                        {prog3?.dataFileCount} Data Files{' '}
                                                     </p>
-                                                    <p className={classes.gray} data-testid="Tech-documents">
-                                                        {tech.documentCount} Documents
+                                                    <p className={classes.gray} data-testid="p3-documents">
+                                                        {prog3?.documentCount} Documents
                                                     </p>
                                                 </div>
                                             </div>
-                                            <h1 className={`${classes.statBottomContent}`} data-testid="Tech-studies">
-                                                {tech.studyCount} Studies
+                                            <h1 className={`${classes.statBottomContent}`} data-testid="p3-studies">
+                                                {prog3?.studyCount} Studies
                                             </h1>
                                         </div>
                                     </Col>
@@ -460,24 +452,21 @@ const Homepage = (props) => {
                                     <Col md={6} sm={12}>
                                         <div className={classes.stat}>
                                             <h1 className={`${classes.statTitle} ${classes.darkBlue}`}>
-                                                <a href="https://rapids.ll.mit.edu/" target="_blank" rel="noopener noreferrer">
-                                                    {dht.name}
-                                                </a>
-                                                <ExternalLinkIcon width="15" height="15" />
+                                                {prog4?.name}
                                             </h1>
                                             <div className={`${classes.dccDescription} ${classes.gray}`}>
                                                 Developing digital health solutions to identify, trace, and monitor infected individuals.
                                             </div>
                                             <div className={classes.statMiddleContent}>
-                                                <RADxDHTStatIcon />
+                                                <Program4StatIcon />
                                                 <div className={classes.statMiddleContentText}>
                                                     <p className={classes.gray} style={{ width: '155px' }}>
-                                                        Stored in RAPIDS Repository
+                                                        Stored in Another Repository
                                                     </p>
                                                 </div>
                                             </div>
-                                            <h1 className={`${classes.statBottomContent}`} data-testid="DHT-studies">
-                                                {dht.studyCount} {getStudyLabel(dht.studyCount)}
+                                            <h1 className={`${classes.statBottomContent}`} data-testid="p4-studies">
+                                                {prog4?.studyCount} {getStudyLabel(prog4?.studyCount)}
                                             </h1>
                                         </div>
                                     </Col>
@@ -491,7 +480,7 @@ const Homepage = (props) => {
                 <Col lg={12}>
                     <Card title="RADx Study Updates" headerImg="/images/large1.png" variant="info" bkgdColor="#E6E6E6">
                         <Row className={classes.contentUpdates}>
-                            {newStudies.length > 0 && (
+                            {newStudies?.length > 0 && (
                                 <Col md={12} lg={12 / numOfContentCategories}>
                                     <Card
                                         cardClassOverride={classes.contentCard}
@@ -509,7 +498,7 @@ const Homepage = (props) => {
                                     </Card>
                                 </Col>
                             )}
-                            {newFiles.length > 0 && (
+                            {newFiles?.length > 0 && (
                                 <Col md={12} lg={12 / numOfContentCategories}>
                                     <Card
                                         cardClassOverride={classes.contentCard}
@@ -528,7 +517,7 @@ const Homepage = (props) => {
                                     </Card>
                                 </Col>
                             )}
-                            {updatedFiles.length > 0 && (
+                            {updatedFiles?.length > 0 && (
                                 <Col md={12} lg={12 / numOfContentCategories}>
                                     <Card
                                         cardClassOverride={classes.contentCard}

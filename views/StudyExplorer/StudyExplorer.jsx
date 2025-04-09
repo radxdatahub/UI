@@ -1,11 +1,14 @@
 /* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import classes from './StudyExplorer.module.scss';
 import FacetCard from './Components/Facets/FacetCard';
 import ResultsSection from './Components/Results/ResultsSection';
 import { useRouter } from 'next/router';
+import useRest from '../../lib/hooks/useRest';
+import { downloadLink } from '../../lib/pageHelpers/downloadLink';
 import SearchActions from './Components/Misc/SearchActions';
 import { updateStateObject } from '../../lib/hooks/updateStateObject';
 import BadgeSection from './Components/Facets/BadgeSection';
@@ -28,6 +31,10 @@ import Link from 'next/link';
 const StudyExplorer = (props) => {
     const { searchResults, facetList, properties, initialQuery, CSV_URL } = props;
     const router = useRouter();
+    const { restGet } = useRest();
+    const { user } = useSelector((state) => state.userProfile);
+    const isLoggedIn = user ? { loggedIn: true } : { loggedIn: false };
+
     // URL Query Parameters -> These should all be strings
     const [query, setQuery] = useState(initialQuery?.search || '');
     const [facets, setFacets] = useState(initialQuery?.facets);
@@ -73,14 +80,31 @@ const StudyExplorer = (props) => {
         });
 
         for (const property in properties.Representative) {
-            tableColumns.push({
+            const temp = {
                 id: properties.Representative[property].entityPropertyName,
                 accessorKey: properties.Representative[property].entityPropertyName,
                 cell: (props) => <span className={classes.bold}>{props.getValue()}</span>,
                 header: properties.Representative[property].displayLabel,
                 size: 130,
                 alignLeft: true,
-            });
+            };
+
+            switch (properties.Representative[property].entityPropertyName) {
+                case 'study_population_focus':
+                    temp.size = 200;
+                    break;
+                case 'topics':
+                    temp.size = 200;
+                    break;
+                case 'source':
+                    temp.size = 180;
+                    break;
+                default:
+                    temp.size = 130;
+                    break;
+            }
+
+            tableColumns.push(temp);
         }
     }
 
@@ -146,7 +170,8 @@ const StudyExplorer = (props) => {
             setSorting,
         };
 
-        sendGAEvent('event', 'studyExplorer', { value: 'Study Explorer Search Made', query: JSON.stringify(searchQueryBuilderProps) });
+        const gaSearchObj = { ...searchQueryBuilderProps, ...isLoggedIn };
+        sendGAEvent('event', 'studyExplorer', { value: 'Study Explorer Search Made', query: JSON.stringify(gaSearchObj) });
         const searchQuery = buildSearchQuery(searchQueryBuilderProps);
 
         await router.push(`/studyExplorer?${searchQuery}`, undefined, { scroll: false });
@@ -197,6 +222,7 @@ const StudyExplorer = (props) => {
                                 toggleAdvancedSearch={toggleAdvancedSearch}
                                 hasResults={searchResults.hits.total.value > 0}
                                 CSV_URL={CSV_URL}
+                                restGet={restGet}
                                 tableColumns={tableColumns}
                                 setColumnVisibility={setColumnVisibility}
                                 columnVisibility={columnVisibility}
