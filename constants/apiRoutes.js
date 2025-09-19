@@ -1,4 +1,4 @@
-const BASE_URL = process.env.DEV_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_DEV_URL;
 const test = 'http://localhost:8080';
 // API URLS
 /**
@@ -23,6 +23,9 @@ export const GET_STUDY_DATASETS = `${BASE_URL}/api/entity/v1/study/getDatasets?s
 export const GET_FACETS = `${BASE_URL}/api/entity/v1/search/getFacets`;
 export const GET_PROPERTIES = `${BASE_URL}/api/entity/v1/search/getProps`;
 export const GET_AUTOCOMPLETE = `${BASE_URL}/api/search/v1/studies/autocomplete?q=`;
+export const GET_VARIABLES = `${BASE_URL}/api/entity/v1/search/variables`;
+export const GET_VARIABLES_BY_STUDY = `${BASE_URL}/api/entity/v1/search/variables?studyId=`;
+export const SEARCH_VARIABLES = ``;
 
 // USER SUPPORT REQUEST FORM API CALL
 export const POST_SUPPORT_REQUEST = `${BASE_URL}/api/user/v1/support-request/submit`;
@@ -158,7 +161,12 @@ export const GET_UPLOAD_PORTAL_DOWNLOADS = `${BASE_URL}/api/submission-service/v
 export const DELETE_UPLOAD_FILE = `${BASE_URL}/api/submission-service/v1/uploadPortal/curator/dashboard/delete?uploadId=`;
 
 // STUDY OVERVIEW
-export const GET_METADATA_FILE_CONTENT = `${BASE_URL}/api/download/v1/download/meta-dict?fileId=`;
+export const GET_METADATA_DICT_FILE_CONTENT = `${BASE_URL}/api/download/v1/download/meta-dict?fileId=`;
+
+// VARIABLE OVERVIEW
+export const GET_VARIABLE = `${BASE_URL}/api/entity/v1/variable/overview?variableId=`;
+export const GET_PERMISSIBLE_VALUES = `${BASE_URL}/api/entity/v1/variable/permissibleValues?variableId=`;
+export const GET_LINKED_STUDIES = `${BASE_URL}/api/entity/v1/variable/linkedStudies?variableId=`;
 
 // NEWS ARTICLES
 export const GET_NEWS_ARTICLE = `${BASE_URL}/api/entity/v1/getNews/`;
@@ -199,7 +207,7 @@ export const DI_DELETE_BUNDLE = '/api/launch/DataIngest/DataIngestDeleteBundle';
 export const DI_SEND_ACKNOWLEDGEMENT = '/api/launch/DataIngest/DataIngestAcknowledgement';
 export const SUBMITTER_DELETE_SUBMISSION = '/api/launch/SubmitterDash/SubmitterDashDeleteSubmission';
 export const PUT_FILES_TO_WORKBENCH = '/api/launch/ApprovedData/PutFilesToWorkbench?sasFiles=[sasFileIDs]&dataFiles=[dataFileIDs]&studyId=[studyId]';
-export const MOVE_PUBLIC_TO_WORKBENCH = '/api/launch/PublicData/MovePublicToWorkbench?fileIds=[fileIDs]&studyId=[studyId]';
+export const MOVE_PUBLIC_TO_WORKBENCH = '/api/launch/PublicData/MovePublicToWorkbench?fileIds=[fileIDs]&id=[id]';
 export const LOGIN = `/api/launch/Login/login`;
 export const DI_MULTI_UPLOAD = '/api/launch/DataIngest/DataIngestMultiUpload';
 export const REFRESH_TOKEN = '/api/launch/SessionToken/SessionToken';
@@ -208,7 +216,7 @@ export const POST_WORKBENCH_ADDON_REQUEST = '/api/launch/ApprovedData/AddonReque
 export const DI_PREVIOUS_PAGE = `/api/launch/DataIngest/DataIngestPreviousPage`;
 export const SUBMIT_STUDY_FILE_REVIEW = `/api/launch/StudyFileSubmission/SubmitStudyFileReview`;
 export const WORKBENCH_LINK = `/api/launch/ApprovedData/WorkbenchLink`;
-export const GET_METADATA = '/api/launch/StudyOverview/getMetadata?fileId=';
+export const GET_METADATA_DICT_CONTENT = '/api/launch/StudyOverview/getMetadataDict?fileId=';
 export const UPDATE_WORKBENCH_REQUEST = `/api/launch/ApprovedData/UpdateWorkbenchRequest`;
 export const DELETE_MULTIPLE_FILES = `/api/launch/DataIngest/DataIngestDeleteMultiple`;
 export const EXPLORER_AUTOCOMPLETE = `/api/launch/StudyExplorer/StudyExplorerAutocomplete`;
@@ -220,6 +228,7 @@ export const STUDY_PORTAL_UPLOAD = '/api/launch/StudyPortal/StudyPortalUpload';
 export const UPLOAD_FILE_DELETION = '/api/launch/UploadPortal/UploadFileDeletion';
 export const APPROVED_STUDY_FILES_DELETION = `/api/launch/StudyRegistration/StudyFilesDeletion?studyId=[studyId]`;
 export const STUDY_DELETION = `/api/launch/StudyRegistration/StudyDeletion?studyId=[studyId]`;
+export const GET_STUDY_VARIABLES = `/api/launch/StudyExplorer/getStudyVariables?studyId=`;
 
 // Downloads: baseURL + apiUrl
 export const GET_DOCUMENT = `/api/download/v1/download/document?fileId=[fileID]&studyId=[studyID]`;

@@ -10,7 +10,6 @@ export async function getServerSideProps(context) {
     logger.defaultMeta.service = 'pages_study_overview';
     const { req } = context;
     const { studyId } = context.query;
-    const baseUrl = process.env.DEV_URL;
     let studyData, studyDocuments, studyDatasets;
 
     // GET Study
@@ -100,7 +99,6 @@ export async function getServerSideProps(context) {
             studyData,
             studyDocuments,
             studyDatasets,
-            baseUrl,
             pageTitle: 'Study Overview'
         },
     };
