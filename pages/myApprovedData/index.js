@@ -3,6 +3,7 @@ import logger from '../../lib/logger';
 import { GET_APPROVED_DATA } from '../../constants/apiRoutes';
 import axios from 'axios';
 import ApprovedData from '../../views/ApprovedData/ApprovedData';
+import Cookies from 'js-cookie';
 
 const ApprovedDataPage = (props) => <ApprovedData {...props} />;
 
@@ -11,7 +12,6 @@ export async function getServerSideProps(context) {
     const { req } = context;
     let approvedData = [];
     let hasWorkbench, hasActiveAddonRequest, addonType;
-    const baseUrl = process.env.DEV_URL;
 
     logger.info('Calling GET_APPROVED_DATA: %s', GET_APPROVED_DATA);
     try {
@@ -28,7 +28,16 @@ export async function getServerSideProps(context) {
         addonType = searchResponse.data.addonType;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            if (e?.response?.status === 401) {
+                Cookies.remove('chocolateChip');
+            }
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -43,7 +52,7 @@ export async function getServerSideProps(context) {
             approvedData,
             hasActiveAddonRequest,
             hasWorkbench,
-            baseUrl,
+            pageTitle: 'My Approved Data Access'
         },
     };
 }

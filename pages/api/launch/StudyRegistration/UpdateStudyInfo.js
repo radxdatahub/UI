@@ -1,7 +1,7 @@
 import BaseMiddleware from '../../../../middleware/baseMiddleware';
 import logger from '../../../../lib/logger';
 import { baseResponse, errorResponse } from '../../../../lib/baseResponse';
-import { DELETE_STUDY, GET_STUDY_ENTITIES, PUT_STUDY_REGISTRATION } from '../../../../constants/apiRoutes';
+import { GET_STUDY_ENTITIES, PUT_STUDY_REGISTRATION } from '../../../../constants/apiRoutes';
 import axios from 'axios';
 import { matchAndAddDataPoint, processArrayData } from '../../../../lib/APIHelpers/studyRegFunctions';
 
@@ -95,12 +95,7 @@ export default async (req, res) => {
                 break;
             }
             case 'DELETE':
-                logger.info(`Calling DELETE_STUDY at: ${DELETE_STUDY}${id}`);
-                studyUpdateResponse = await axios.delete(`${DELETE_STUDY}${id}`, {
-                    withCredentials: true,
-                    headers: { Cookie: req.headers.cookie },
-                });
-                res.json(baseResponse('', studyUpdateResponse?.data));
+                res.status(404).end();
                 break;
         }
     } catch (e) {

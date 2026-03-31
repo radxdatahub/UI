@@ -7,7 +7,7 @@ import { ParallaxProvider } from 'react-scroll-parallax';
 import '@fontsource-variable/open-sans';
 import { useRouter } from 'next/router';
 import { useStore } from '../store/store';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { hideLoading, showLoading } from '../store/environment/environmentSlice';
 import { SSRProvider } from 'react-bootstrap';
 import { GoogleAnalytics } from '@next/third-parties/google';
@@ -15,7 +15,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 function Application({ Component, pageProps }) {
     const store = useStore(pageProps.initialReduxState);
     const router = useRouter();
-    pageProps.siteUrl = process.env.DEV_URL;
+    pageProps.baseUrl = process.env.NEXT_PUBLIC_DEV_URL;
 
     useEffect(() => {
         const start = () => {
@@ -33,6 +33,18 @@ function Application({ Component, pageProps }) {
             router.events.off('routeChangeError', end);
         };
     }, [router]);
+
+    // const usePreviousRoute = () => {
+    //     const { asPath } = useRouter();
+
+    //     const ref = useRef(null);
+
+    //     useEffect(() => {
+    //       ref.current = asPath;
+    //     }, [asPath]);
+
+    //     return ref.current;
+    //   };
 
     return (
         <SSRProvider>

@@ -30,7 +30,8 @@ export async function getServerSideProps(context) {
 
     return {
         props: {
-            news
+            news,
+            pageTitle: 'News',
         },
     };
 }

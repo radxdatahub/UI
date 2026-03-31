@@ -23,4 +23,14 @@
     color: white;
 }
 
+.disabled {
+    background: #ccc;
+    color: #8a8a8a;
+    cursor: default;
 
+    &:hover {
+        background: #ccc;
+        color: #8a8a8a;
+        cursor: default;
+    }
+}

@@ -9,6 +9,7 @@ import InfoIcon from '../../Images/svg/InfoIcon';
 import Link from 'next/link';
 import LoginModal from './Components/LoginModal';
 import LogoutModal from './Components/LogoutModal';
+import UserProfileModal from '../../../views/UserProfile/UserProfileModal';
 import { useRouter } from 'next/router';
 
 /**
@@ -20,25 +21,40 @@ import { useRouter } from 'next/router';
 
 const PageHeader = (props) => {
     const { userProfile } = props;
-
     const router = useRouter();
     const [loginVisible, setLoginVisible] = useState(false);
     const [logoutVisible, setLogoutVisible] = useState(false);
+    const [userProfileVisible, setUserProfileVisible] = useState(false);
+
     const closeLoginModal = () => {
         setLoginVisible(false);
     };
     const closeLogoutModal = () => {
         setLogoutVisible(false);
     };
+    const closeUserProfileModal = () => {
+        setUserProfileVisible(false);
+    };
 
     const LoginParams = [
         {
             name: userProfile?.firstName,
-            dropdown: [{ name: 'Logout', link: '' }],
+            dropdown: [
+                { name: 'Edit Profile', link: '' },
+                { name: 'Logout', link: '' },
+            ],
         },
     ];
 
     const dropDownList = [
+        <Dropdown.Item
+            key={'editProfile'}
+            className={classes.dropdownItem}
+            eventKey={'editProfile'}
+            onClick={() => setUserProfileVisible(true)}
+        >
+            Edit Profile
+        </Dropdown.Item>,
         <Dropdown.Item key={'logout'} className={classes.dropdownItem} eventKey={'logout'} onClick={() => setLogoutVisible(true)}>
             Logout
         </Dropdown.Item>,
@@ -69,6 +85,7 @@ const PageHeader = (props) => {
                     )}
                 </Col>
                 <LoginModal visible={loginVisible} closeModal={closeLoginModal} />
+                <UserProfileModal visible={userProfileVisible} closeModal={closeUserProfileModal} userId={userProfile?.id} />
                 <LogoutModal visible={logoutVisible} closeModal={closeLogoutModal} />
             </Row>
         </>

@@ -23,3 +23,9 @@
     border: none;
     color: white;
 }
+
+.dropdownButton:disabled {
+    background-color: gray;
+    border: none;
+    color: black;
+}

@@ -24,16 +24,25 @@ import UserManageDashModal from './Components/UserDashModal';
  */
 
 const UserDashboard = (props) => {
-    const { getUserDashboard, userRoleList, approvedInstitutions, generalStatuses, researcherLevels, dccs } = props;
+    const { getUserDashboard, status, userRoleList, approvedInstitutions, generalStatuses, researcherLevels, dccs } = props;
     const router = useRouter();
     const [userModalVisible, setUserModalVisible] = useState(false);
     const [userId, setUserId] = useState(null);
 
+    const menuItems = [
+        {
+            label: 'Active',
+            value: 'active',
+        },
+        {
+            label: 'Inactive',
+            value: 'inactive',
+        },
+    ];
+
     // set active state
-    const defaultState = {
-        label: 'Active',
-        value: 'active',
-    };
+    const defaultState = menuItems.find((x) => x.value === status);
+
     const [selectedItem, setSelectedItem] = useState(defaultState);
 
     useEffect(() => {
@@ -68,17 +77,6 @@ const UserDashboard = (props) => {
             page: 'Manage Users Dashboard',
             pageLink: '/userDashboard',
             ariaLabel: 'manage user dashboard',
-        },
-    ];
-
-    const menuItems = [
-        {
-            label: 'Active',
-            value: 'active',
-        },
-        {
-            label: 'Inactive',
-            value: 'inactive',
         },
     ];
 

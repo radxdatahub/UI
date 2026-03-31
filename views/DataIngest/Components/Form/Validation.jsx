@@ -1,8 +1,8 @@
 /* eslint-disable multiline-ternary */
 import React, { useState, useEffect } from 'react';
-import { Row, Form, Col } from 'react-bootstrap';
+import { Row, Form, Col, Container } from 'react-bootstrap';
 import classes from './DataIngestForm.module.scss';
-import Table from '../../../../components/Table/Table';
+import Alert from '../../../../components/Notifications/Alert';
 import Button from '../../../../components/Button/Button';
 import DataIngestFormNavigation from './DataIngestFormNavigation';
 import DropdownButton from '../../../../components/DropdownButton/DropdownButton';
@@ -19,10 +19,23 @@ import {
     GET_DOWNLOAD_BY_SUBMISSION,
     DI_SAVE_VALIDATION,
 } from '../../../../constants/apiRoutes';
+import { downloadLink } from '../../../../lib/pageHelpers/downloadLink';
 import DeleteBundleModal from '../DeleteBundleModal';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
-import { CheckCircle, CheckCircleFill, DashLg, ExclamationTriangleFill, HourglassSplit } from 'react-bootstrap-icons';
+import {
+    CheckCircle,
+    CheckCircleFill,
+    DashLg,
+    ExclamationTriangleFill,
+    HourglassSplit,
+    ChevronRight,
+    ChevronDown,
+} from 'react-bootstrap-icons';
+import ExpandableTable from '../../../../components/Table/ExpandableTable';
+import OpenBundle from '../../../../components/Images/svg/OpenBundle';
+import ClosedBundle from '../../../../components/Images/svg/ClosedBundle';
+import SubBranchIcon from '../../../../components/Images/svg/SubBranchIcon';
 
 /**
  * Third step of the Data ingest form - validation of the files is done here
@@ -56,7 +69,23 @@ const Validation = (props) => {
     const alterErrorFiles = (files) => {
         const eFiles = [...files];
         const newFiles = eFiles.map((file) => {
-            const action = file.acknowledged ? 'Acknowledged' : 'Action Needed';
+            let action;
+            action = file.acknowledged ? 'Acknowledged' : 'Action Needed';
+            if (file.fileType === 'Tabular Data - Harmonized' && !file.acknowledged) {
+                action = (file.cdeErrors || file.piiErrors) ? 'Action Needed' : '-';
+            } else if (file.fileType === 'Tabular Data - Non-harmonized' && !file.acknowledged) {
+                action = file.piiErrors ? 'Action Needed' : '-';
+            }
+            file.childFiles.forEach((child) => {
+                // check for which type of file it is first before determining the action taken
+                let actionTaken;
+                if (child.fileType.includes('Metadata')) {
+                    actionTaken = Object.keys(child.metaErrors).length > 0 ? 'Action Needed' : '-';
+                } else {
+                    actionTaken = Object.keys(child.dictErrors).length > 0 ? 'Action Needed' : '-';
+                }
+                child.actionTaken = actionTaken;
+            });
             return { ...file, actionTaken: action };
         });
         setErrorFiles([...newFiles]);
@@ -172,9 +201,10 @@ const Validation = (props) => {
         if (diUploadResult.status === 200) {
             setTimeout(function () {
                 const files = [...errorFiles];
-                const results = diUploadResult?.data?.data?.validationResults[0];
+                const results = diUploadResult?.data?.data?.bundles[0];
                 const newFiles = files.filter((f) => f.fileId !== results.fileId);
-                const action = results.dataEntryWarningCount + results.missingHeaders?.length > 0 ? 'Action Needed' : 'File Replaced';
+                const action =
+                    results.cdeErrors || results.dictErrors || results.metaErrors || results.piiErrors ? 'Action Needed' : 'File Replaced';
                 if (newFiles.length > 0) {
                     setErrorFiles([...newFiles, { ...results, actionTaken: action }]);
                 } else {
@@ -191,15 +221,13 @@ const Validation = (props) => {
             errorMessage: 'Error getting results',
         });
         if (validateResult.status === 200) {
-            setTimeout(function () {
-                if (validateResult?.data?.data?.validationResults) {
-                    alterErrorFiles(validateResult?.data?.data?.validationResults);
-                }
-                setPiiCheck(validateResult?.data?.data?.piiPhiCompleted);
-                if (errorFiles.length <= 0 && validateResult?.data?.data?.piiPhiCompleted) {
-                    setProceedMessage('There are no validation warnings. Please proceed to the Review and Submit step.');
-                }
-            }, 500);
+            if (validateResult?.data?.data?.bundles) {
+                alterErrorFiles(validateResult?.data?.data?.bundles);
+            }
+            setPiiCheck(validateResult?.data?.data?.piiPhiCompleted);
+            if (errorFiles.length <= 0 && validateResult?.data?.data?.piiPhiCompleted) {
+                setProceedMessage('There are no validation warnings. Please proceed to the Review and Submit step.');
+            }
         }
     };
 
@@ -224,25 +252,24 @@ const Validation = (props) => {
     const saveValidation = async () => {
         const body = {
             submissionId: parseInt(submissionId),
-            validationResults: errorFiles,
+            bundles: errorFiles,
         };
         const saveResult = await restPost(DI_SAVE_VALIDATION, body, {
             showLoading: true,
             showSuccess: true,
-            successMessage: 'Successfully saved validation',
+            successMessage: 'Successfully saved validation progress',
             errorMessage: 'An Error occurred while trying to save validation',
         });
         if (saveResult.status === 200 || saveResult.status === 201) {
-            setTimeout(function () {
-                router.reload();
-            }, 500);
+            router.reload();
         }
     };
 
     const validationCompletion = async () => {
         const body = {
             submissionId: parseInt(submissionId),
-            validationResults: errorFiles,
+            bundles: errorFiles,
+            submit: true,
         };
         const acknowledgeResult = await restPost(DI_SEND_ACKNOWLEDGEMENT, body, {
             showLoading: true,
@@ -261,8 +288,11 @@ const Validation = (props) => {
         if (!piiCheck) {
             return true;
         } else if (errorFiles.length > 0) {
+            const childList = [];
             const needed = errorFiles.filter((err) => err.actionTaken === 'Action Needed');
-            return needed.length > 0 && isValidated;
+            errorFiles.forEach((file) => file.childFiles.forEach((child) => childList.push(child)));
+            const childNeeded = childList.filter((child) => child.actionTaken === 'Action Needed');
+            return needed.length > 0 || childNeeded.length > 0;
         }
         return !isValidated;
     };
@@ -279,11 +309,48 @@ const Validation = (props) => {
         </div>
     );
 
-    const validationTableColumns = [
+    const validationExTableColumns = [
+        {
+            id: 'expander',
+            accessorKey: 'fileName',
+            alignLeft: true,
+            Cell: ({ row }) =>
+                /* eslint-disable-next-line react/prop-types */
+                row.canExpand && row.depth === 0 ? (
+                    /* eslint-disable-next-line react/prop-types */
+                    <div className={classes.row} {...row.getToggleRowExpandedProps({})}>
+                        {/* eslint-disable-next-line react/prop-types */}
+                        <div className={classes.branchIcon}>{row.isExpanded ? <OpenBundle /> : <ClosedBundle />}</div>
+                        {/* eslint-disable-next-line react/prop-types */}
+                        <div className={classes.fileName}>
+                            {row.original.fileName} {row.isExpanded ? <ChevronDown /> : <ChevronRight />}
+                        </div>
+                        {/* eslint-disable-next-line react/prop-types */}
+                    </div>
+                ) : (
+                    <div
+                        /* eslint-disable-next-line react/prop-types */
+                        {...row.getToggleRowExpandedProps({
+                            style: {
+                                /* eslint-disable-next-line react/prop-types */
+                                marginLeft: `${row.depth * 1.5}rem`,
+                            },
+                        })}
+                    >
+                        <div className={classes.row}>
+                            <div className={classes.branchIcon} style={{ fontSize: '20px', color: '#437b83' }}>
+                                <SubBranchIcon />
+                            </div>{' '}
+                            <div className={classes.fileName}>{row.original.fileName}</div>
+                        </div>
+                    </div>
+                ),
+            Header: ({ getToggleAllRowsExpandedProps }) => <span {...getToggleAllRowsExpandedProps()}>File Name</span>,
+            size: 425,
+        },
         {
             id: 'piiErrors',
-            accessorKey: '',
-            cell: (props) => {
+            Cell: (props) => {
                 let showIcon;
                 /* eslint-disable-next-line react/prop-types */
                 const errObj = props.row.original;
@@ -311,13 +378,13 @@ const Validation = (props) => {
                 }
                 return showIcon;
             },
-            header: 'PII',
-            size: '55',
+            Header: 'PII',
+            size: 50,
         },
         {
             id: 'cdeErrors',
-            accessorKey: 'cdeErrors',
-            cell: (props) => {
+            accessorKey: '',
+            Cell: (props) => {
                 /* eslint-disable-next-line react/prop-types */
                 const errObj = props.row.original;
                 let showIcon;
@@ -327,7 +394,7 @@ const Validation = (props) => {
                 } else if (
                     /* eslint-disable-next-line react/prop-types */
                     errObj.cdeErrors || errObj.missingHeaders?.length > 0 || errObj.cdeErrors // eslint-disable-next-line react/prop-types
-                        ? Object.keys(props.getValue()).length > 0
+                        ? Object.keys(errObj?.cdeErrors).length > 0
                         : false
                 ) {
                     /* eslint-disable-next-line react/prop-types */
@@ -349,15 +416,14 @@ const Validation = (props) => {
                 }
                 return showIcon;
             },
-            header: 'CDE',
-            size: '55',
+            Header: 'CDE',
+            size: 60,
         },
         {
             id: 'meta',
-            accessorKey: '',
-            header: 'Meta',
-            size: '55',
-            cell: (props) => {
+            Header: 'Meta',
+            size: 65,
+            Cell: (props) => {
                 /* eslint-disable-next-line react/prop-types */
                 const errObj = props.row.original;
                 let showIcon;
@@ -381,10 +447,9 @@ const Validation = (props) => {
         },
         {
             id: 'dict',
-            accessorKey: '',
-            header: 'Dict',
-            size: '55',
-            cell: (props) => {
+            Header: 'Dict',
+            size: 65,
+            Cell: (props) => {
                 /* eslint-disable-next-line react/prop-types */
                 const errObj = props.row.original;
                 let showIcon;
@@ -407,36 +472,26 @@ const Validation = (props) => {
             },
         },
         {
-            id: 'fileName',
-            accessorKey: 'fileName',
-            alignLeft: true,
-            cell: (props) => {
-                /* eslint-disable-next-line react/prop-types */
-                return <span>{props.getValue()}</span>;
-            },
-            header: 'File Name',
-            size: '325',
-        },
-        {
             id: 'fileType',
-            accessorKey: 'fileType',
-            header: 'File Type',
-            size: '125',
+            Cell: ({ row }) => <span>{row.original.fileType}</span>,
+            Header: 'File Type',
+            size: 125,
         },
         {
             id: 'errorCount',
             accessorKey: 'dataEntryWarningCount',
-            header: 'Warning Count',
-            cell: (props) => {
+            Header: 'Warning Count',
+            Cell: (props) => {
                 /* eslint-disable-next-line react/prop-types */
                 const errObj = props.row.original;
                 /* eslint-disable-next-line react/prop-types */
-                return props.getValue() + (errObj.missingHeaders?.length ? errObj.missingHeaders?.length : 0) ? (
+                return errObj?.dataEntryWarningCount + (errObj.missingHeaders?.length ? errObj.missingHeaders?.length : 0) ? (
                     <ValidationErrorModal
                         /* eslint-disable-next-line react/prop-types */
                         fileId={errObj.fileId}
                         /* eslint-disable-next-line react/prop-types */
                         baseUrl={baseUrl}
+                        restGet={restGet}
                         /* eslint-disable-next-line react/prop-types */
                         cdeErrors={errObj.cdeErrors}
                         /* eslint-disable-next-line react/prop-types */
@@ -450,35 +505,40 @@ const Validation = (props) => {
                         errorCount={
                             /* eslint-disable-next-line react/prop-types */
                             errObj.missingHeaders?.length > 0 /* eslint-disable-next-line react/prop-types */
-                                ? props.getValue() + 1 /* eslint-disable-next-line react/prop-types */
-                                : props.getValue()
+                                ? errObj?.dataEntryWarningCount + 1 /* eslint-disable-next-line react/prop-types */
+                                : errObj?.dataEntryWarningCount
                         }
                     />
                 ) : (
                     <span>0 Warnings</span>
                 );
             },
-            size: '150',
+            size: 170,
         },
         {
             id: 'actions',
-            accessorKey: '',
-            size: 100,
-            cell: (props) => {
+            size: 105,
+            Cell: (props) => {
                 /* eslint-disable-next-line react/prop-types */
-                return <DropdownButton label="Actions" menuItems={createActionList(props.row.original)} />;
+                const errObj = props.row.original;
+                return (
+                    <DropdownButton
+                        label="Actions"
+                        menuItems={createActionList(errObj)}
+                        disabled={!(errObj?.dataEntryWarningCount + (errObj.missingHeaders?.length ? errObj.missingHeaders?.length : 0) > 0)}
+                    />
+                );
             },
-            header: 'Actions',
+            Header: 'Actions',
         },
         {
             id: 'actionTaken',
-            accessorKey: 'actionTaken',
-            size: 120,
-            cell: (props) => {
+            size: 130,
+            Cell: (props) => {
                 /* eslint-disable-next-line react/prop-types */
-                return <span>{props.getValue()}</span>;
+                return <span>{props.row.original.actionTaken}</span>;
             },
-            header: 'Action Taken',
+            Header: 'Action Taken',
         },
     ];
 
@@ -490,7 +550,7 @@ const Validation = (props) => {
                         className={classes.instructionsContainer}
                         body={
                             <div>
-                                The RADx Data Hub will automatically validate data files as well as metadata and data dictionary files. To
+                                The Data Hub will automatically validate data files as well as metadata and data dictionary files. To
                                 start the validation process, press ‘Begin Validation.’ If the system finds any problems with your files,
                                 you can address the issues on the next screen.
                             </div>
@@ -541,36 +601,40 @@ const Validation = (props) => {
                                 Indicates the validation type is not applicable to a file
                             </p>
                         </Row>
-                        <Row className="m-0 p-0">
+                        {!checkActionNeeded() && (
+                            <Alert variant="success" className={classes.alert}>
+                                <Container>
+                                    <Row className="py-1">
+                                        <div className={classes.noWarnings}>
+                                            There are no validation warnings. Please click 'Next Page' to proceed to the Review and Submit
+                                            step.
+                                        </div>
+                                    </Row>
+                                </Container>
+                            </Alert>
+                        )}
+                        <Container className="m-0 p-0">
                             <Row className="m-0 p-0 mb-3">
                                 <Col className="col-6 p-0">
-                                    <Form.Label className={classes.uploadLabel}> Files with Validation Warnings</Form.Label>
+                                    <Form.Label className={classes.uploadLabel}> Bundle Files</Form.Label>
                                 </Col>
                                 <Col className={`${classes.downloadAll} col-6 p-0`}>
-                                    <a
-                                        href={`${baseUrl}${GET_DOWNLOAD_BY_SUBMISSION}${submissionId}`}
-                                        download={`submission_${submissionId}_validation_warnings.csv`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
+                                    {checkActionNeeded() && (
                                         <Button
                                             label="Download All Warnings"
                                             ariaLabel="download all warnings"
                                             size="auto"
                                             iconLeft={<DownloadIcon />}
                                             variant="secondary"
-                                            handleClick={() => {}}
+                                            handleClick={async () => {
+                                                downloadLink(`${baseUrl}${GET_DOWNLOAD_BY_SUBMISSION}${submissionId}`, restGet);
+                                            }}
                                         />
-                                    </a>
+                                    )}
                                 </Col>
                             </Row>
-                            <Table
-                                tableHeaders={validationTableColumns}
-                                tableRows={errorFiles}
-                                className={classes.validationTable}
-                                variant="dataIngest"
-                            />
-                        </Row>
+                            <ExpandableTable tableData={errorFiles} tableColumns={validationExTableColumns} />
+                        </Container>
                     </div>
                 ) : (
                     <Row className={classes.emptyValidation}>
@@ -585,6 +649,7 @@ const Validation = (props) => {
                 submissionId={submissionId}
                 handleNextPage={validationCompletion}
                 handleSave={saveValidation}
+                renderSave={checkActionNeeded()}
                 isValidated={isValidated && piiCheck}
             />
         </div>

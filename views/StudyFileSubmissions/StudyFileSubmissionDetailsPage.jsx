@@ -14,6 +14,7 @@ import Alert from '../../components/Notifications/Alert';
 import { submissionsTableColumns } from './Components/DetailsPageColumnDef';
 import RejectModal from './Components/RejectModal';
 import { SUBMIT_STUDY_FILE_REVIEW, DOWNLOAD_STUDY_FILES } from '../../constants/apiRoutes';
+import { downloadLink } from '../../lib/pageHelpers/downloadLink';
 import DownloadIcon from '../../components/Images/svg/DownloadIcon';
 
 /**
@@ -33,7 +34,7 @@ const StudyFileSubmissionDetailsPage = (props) => {
         setRejectModalVisible(false);
     };
 
-    const { restPost } = useRest();
+    const { restPost, restGet } = useRest();
     const router = useRouter();
 
     const {
@@ -204,21 +205,16 @@ const StudyFileSubmissionDetailsPage = (props) => {
                     </Container>
                     <Container className={classes.Container}>
                         <div className={classes.buttons}>
-                            <a
-                                href={`${baseUrl}${DOWNLOAD_STUDY_FILES}${submissionId}`}
-                                download={`submission_${submissionId}_study_files.zip`}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                <Button
-                                    className={classes.download}
-                                    label="Download All Files"
-                                    iconLeft={<DownloadIcon />}
-                                    variant="secondary"
-                                    size="auto"
-                                    handleClick={() => {}}
-                                ></Button>
-                            </a>
+                            <Button
+                                className={classes.download}
+                                label="Download All Files"
+                                iconLeft={<DownloadIcon />}
+                                variant="secondary"
+                                size="auto"
+                                handleClick={async () => {
+                                    downloadLink(`${baseUrl}${DOWNLOAD_STUDY_FILES}${submissionId}`, restGet);
+                                }}
+                            ></Button>
                             <span className={classes.acceptRejectAll}>
                                 <Button label="Accept All" variant="primary" size="auto" handleClick={() => applyToAll('Accept')}></Button>
                                 <Button label="Reject All" variant="primary" size="auto" handleClick={() => applyToAll('Reject')}></Button>

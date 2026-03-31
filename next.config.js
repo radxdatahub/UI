@@ -1,4 +1,8 @@
 module.exports = {
+    i18n: {
+        locales: ['en'],
+        defaultLocale: 'en',
+    },
     reactStrictMode: true,
     eslint: {
         ignoreDuringBuilds: true,
@@ -7,7 +11,7 @@ module.exports = {
         return [
             {
                 // Sets security headers for all routes
-                source: '/(.*)',
+                source: '/(.*)?',
                 headers: [
                     {
                         key: 'Permissions-Policy',

@@ -24,11 +24,19 @@ export async function getServerSideProps(context) {
         newsArticleData = searchResponse.data;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/news`,
+                },
+            };
+        }
     }
 
     return {
         props: {
             newsArticleData,
+            pageTitle: 'News',
         },
     };
 }

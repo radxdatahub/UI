@@ -1,6 +1,6 @@
 /* eslint-disable multiline-ternary */
 import React, { useState } from 'react';
-import { Col, Row, Container } from 'react-bootstrap';
+import { Col, Row, Container, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import Input from '../../../components/Input/Input';
 import Select from '../../../components/Select/Select';
@@ -10,7 +10,7 @@ import Toggle from '../../../components/Toggle/Toggle';
 import classes from './UserRegistrationForm.module.scss';
 import { validateEmail } from '../../../lib/validators/emailValidator';
 import { useRouter } from 'next/router';
-import { map, isEmpty } from 'lodash';
+import { map, isEmpty, startCase } from 'lodash';
 import Alert from '../../../components/Notifications/Alert';
 import useRest from '../../../lib/hooks/useRest';
 import { USER_REGISTRATION } from '../../../constants/apiRoutes';
@@ -28,30 +28,64 @@ import AddInstitutionModal from './AddInstitutionModal';
  * @property {Array} researcherLevels - Array of all the different researcher levels for a user
  * @property {Object} rasUser - User information coming from Ras when logging in from login.gov - used to pre-populate user registration fields
  * @property {Boolean} checkUser - Boolean to see if user is logged in
- * @returns {JSX} Add Institution Modal Component
+ * @property {Array} referrerTypes - Array of all the ways you may have heard of the site
+ * @returns {JSX} User Registration Form Component
  */
 
 const UserRegistrationForm = (props) => {
-    const { rasUser, researcherLevels, approvedInstitution, allStates, allCountries, institutionTypes, checkUser } = props;
+    const { rasUser, researcherLevels, approvedInstitution, allStates, allCountries, institutionTypes, checkUser, referrerTypes } = props;
     const router = useRouter();
     const { restPost } = useRest();
     const [visible, setVisible] = useState(false);
     const [institutionList, setInstitutionList] = useState(approvedInstitution);
     const [institutionObj, setInstitutionObj] = useState(null);
     const [formatted, setFormatted] = useState('');
+    const [referrerChecked, setReferrerChecked] = useState(referrerTypes.map((refer) => false));
 
     const {
         register: userRegRegister,
         handleSubmit: userRegRegisterHandleSubmit,
         setValue: userRegSetValue,
+        getValues: userRegGetValue,
         formState: { errors: userRegErrors },
+        watch,
     } = useForm({
         mode: 'onSubmit',
         reValidateMode: 'onSubmit',
     });
 
+    const referrerCheck = [];
+    referrerTypes.map((refer) => referrerCheck.push(watch(`referrer${refer.id}`)));
+
     const handleFormSubmitHelper = async (data, e) => {
-        const userRegistrationResult = await restPost(USER_REGISTRATION.replace('[sessionId]', rasUser.id), data, {
+        const referrerDataCheck = [];
+        const referrerDataSpecific = [];
+        const referrerDataObj = [];
+        Object.keys(data).forEach((key) => {
+            if (key.includes('referrer') && data[key]) {
+                if (key.includes('Detail')) {
+                    referrerDataSpecific.push(data[key]);
+                } else if (!key.includes('Group')) {
+                    referrerDataCheck.push(key.slice(-1));
+                }
+            }
+        });
+        for (let i = 0; i < referrerDataCheck.length; i++) {
+            referrerDataObj.push({ referrerId: referrerDataCheck[i], referrerSpecify: referrerDataSpecific[i] });
+        }
+        const payload = {
+            acceptTerms: data.acceptTerms,
+            email: data.email,
+            firstName: data.firstName,
+            institution: data.institution,
+            jobTitle: data.jobTitle,
+            lastName: data.lastName,
+            middleInitial: data.middleInitial,
+            orcidId: data.orcidId,
+            referrers: referrerDataObj,
+            researcherLevel: data.researcherLevel,
+        };
+        const userRegistrationResult = await restPost(USER_REGISTRATION.replace('[sessionId]', rasUser.id), payload, {
             showLoading: true,
             showSuccess: true,
             successMessage: 'Successfully sent user registration',
@@ -68,7 +102,7 @@ const UserRegistrationForm = (props) => {
         setVisible(false);
     };
 
-    const orchidIdFormatter = (value) => {
+    const orcidIdFormatter = (value) => {
         const formattedValue = value.replace(/[^0-9x]/gi, '').replace(/(\d{4})(?=\d)/g, '$1-');
         setFormatted(formattedValue);
     };
@@ -194,14 +228,14 @@ const UserRegistrationForm = (props) => {
                                     {...userRegRegister('orcidId', {
                                         maxLength: {
                                             value: 19,
-                                            message: 'Incorrect orchid id',
+                                            message: 'Incorrect orcid id',
                                         },
                                         minLength: {
                                             value: 19,
-                                            message: 'Incorrect orchid id',
+                                            message: 'Incorrect orcid id',
                                         },
                                     })}
-                                    onChange={(e) => orchidIdFormatter(e.target.value)}
+                                    onChange={(e) => orcidIdFormatter(e.target.value)}
                                     value={formatted}
                                     ariaLabel="orcid id"
                                     controlId="orcidId"
@@ -287,10 +321,67 @@ const UserRegistrationForm = (props) => {
                             />
                             <span className={classes.linkMargin}>
                                 Please identify your career stage as a researcher:{' '}
-                                <a href="https://researchtraining.nih.gov/career-path" target="_blank" rel="noopener noreferrer">
-                                    https://researchtraining.nih.gov/career-path
+                                <a href="/" target="_blank" rel="noopener noreferrer">
+                                    /
                                 </a>
                             </span>
+                        </div>
+                    </Row>
+                    <Row className="mb-5">
+                        <div className={`${classes.formLabel} ${classes.errorCheckboxGroup}`}>
+                            <span className={classes.spanTextAsterisk}>*</span> How did you hear about the site?
+                        </div>
+                        <div
+                            {...userRegRegister('referrerGroup', {
+                                required: 'At least one option for how you heard about the site must be selected with details',
+                            })}
+                        >
+                            <Toggle
+                                className={classes.referrerToggleHide}
+                                controlId={`referrer0`}
+                                label={''}
+                                name={`referrer0`}
+                                type="checkbox"
+                                key={'0'}
+                            />
+                            {referrerTypes.map((referrer) => {
+                                return (
+                                    <div key={referrer.id}>
+                                        <Toggle
+                                            handleChange={(e) => {
+                                                userRegSetValue(`referrer${referrer.id}`, e.target.checked);
+                                                const refCheck = [...referrerChecked];
+                                                refCheck[referrer.id - 1] = e.target.checked;
+                                                setReferrerChecked(refCheck);
+                                                userRegSetValue('referrerGroup', refCheck.includes(true));
+                                            }}
+                                            className={classes.referrerToggle}
+                                            controlId={`referrer${referrer.id}`}
+                                            label={referrer.name}
+                                            name={`referrer${referrer.id}`}
+                                            type="checkbox"
+                                            key={referrer.id}
+                                        />
+
+                                        {referrerChecked[referrer.id - 1] ? (
+                                            <div key={`${referrer.id}-specify`} className={classes.specify}>
+                                                <Input
+                                                    {...userRegRegister(`referrer${referrer.id}Detail`, {
+                                                        required: `Specific Details for ${referrer.name} is missing`,
+                                                    })}
+                                                    ariaLabel={`${referrer.name} specific details`}
+                                                    controlId={`referrer${referrer.id}Detail`}
+                                                    error={userRegErrors?.[`referrer${referrer.id}Detail`]}
+                                                    label={startCase(referrer.specifyPrompt)}
+                                                    name={`referrer${referrer.id}Detail`}
+                                                    onChange={() => userRegSetValue('referrerGroup', true)}
+                                                    required
+                                                />
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </Row>
                     <Row className="mb-5">
@@ -359,6 +450,7 @@ UserRegistrationForm.propTypes = {
         lastName: PropTypes.string,
         institutionName: PropTypes.string,
     }),
+    referrerTypes: PropTypes.arrayOf(PropTypes.object),
     researcherLevels: PropTypes.arrayOf(PropTypes.object),
 };
 

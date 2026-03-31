@@ -27,6 +27,7 @@ export async function getServerSideProps(context) {
     return {
         props: {
             requestTypesData,
+            pageTitle: 'Support Request',
         },
     };
 }

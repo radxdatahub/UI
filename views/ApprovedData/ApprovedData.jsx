@@ -1,6 +1,6 @@
 /* eslint-disable multiline-ternary */
 /* eslint-disable max-len */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Container } from 'react-bootstrap';
 import { useRouter } from 'next/router';
@@ -14,7 +14,7 @@ import ApprovedPublicDataTable from '../../components/Table/ApprovedPublicDataTa
 import classes from './ApprovedData.module.scss';
 import { getFileSize } from '../../lib/componentHelpers/TableFunctions/getFileSize';
 import NoticeBox from '../../components/NoticeBox/NoticeBox';
-import { WORKBENCH_LINK, GET_RESOURCE_CENTER_BUCKET } from '../../constants/apiRoutes';
+import { WORKBENCH_LINK } from '../../constants/apiRoutes';
 
 /**
  * Approved Data Page
@@ -90,6 +90,29 @@ const ApprovedData = (props) => {
         },
     ];
 
+    useEffect(() => {
+        // Check if router is ready to be used (hydration complete)
+        if (!router.isReady) {
+            return;
+        }
+
+        // Get hash (if exists) from URL to getElementByID and scroll
+        const hash = window.location.hash;
+        if (!hash) {
+            return;
+        }
+        const id = hash.replace('#', '');
+        const scrollToAnchor = () => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        // Try scrolling after a short delay to make sure content is rendered
+        setTimeout(scrollToAnchor, 100);
+    }, [router.isReady]);
+
     const launchWorkbench = async () => {
         const workbenchResponse = await restPost(WORKBENCH_LINK, [], {
             showLoading: true,
@@ -120,6 +143,7 @@ const ApprovedData = (props) => {
                         noHover
                         allowSort
                         baseUrl={baseUrl}
+                        id={study.studyId}
                     ></ApprovedPublicDataTable>
                 </div>
             </div>
@@ -138,13 +162,6 @@ const ApprovedData = (props) => {
                             variant="primary"
                             handleClick={() => launchWorkbench()}
                         />
-                        <Button
-                            className={classes.generalButton}
-                            label={hasActiveAddonRequest ? 'Add-on Request Submitted' : 'Apply for Add-on'}
-                            variant="secondary"
-                            handleClick={() => router.push('/myApprovedData/addonRequest')}
-                            disabled={hasActiveAddonRequest}
-                        />
                     </Container>
                     <Container className={classes.Container}>
                         <CalloutBox
@@ -161,12 +178,10 @@ const ApprovedData = (props) => {
                                     </div>
                                     <div>
                                         For more guidance on applying for add-ons, downloading files, and transferring files to the
-                                        workbench, please refer to the{' '}
-                                        <a href={`/tutorial?tutorial=approvedData`}>RADx Data Hub User Tutorial.</a>
+                                        workbench, please refer to the Data Hub User Tutorial.
                                     </div>
                                     <div>
-                                        For more guidance on using our tools offerings within the Analytics Workbench, please refer to the{' '}
-                                        <a href={`/workbenchTutorial`}>Workbench User Tutorial.</a>
+                                        For more guidance on using our tools offerings within the Analytics Workbench, please refer to the Workbench User Tutorial.
                                     </div>
                                 </div>
                             }
@@ -181,16 +196,8 @@ const ApprovedData = (props) => {
                     body={
                         <div>
                             You do not have any approved data. To access features on this page as well as the Analytics Workbench, you must
-                            first{' '}
-                            <a
-                                href="https://sharing.nih.gov/accessing-data/accessing-genomic-data/how-to-request-and-access-datasets-from-dbgap"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                receive access
-                            </a>{' '}
-                            for one study in dbGaP. After you receive access, return to this page using the same eRA or NIH Login that you
-                            use to log into to dbGaP. ​
+                            first receive access for one study in system. After you receive access, return to this page using the same
+                            Login that you use to log into to other systems.
                         </div>
                     }
                 />

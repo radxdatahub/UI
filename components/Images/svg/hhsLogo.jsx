@@ -7,7 +7,15 @@ import React from 'react';
  */
 
 const hhsLogo = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="320" height="43" viewBox="150 0 10 43">
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+        width="320"
+        height="43"
+        viewBox="150 0 10 43"
+        role="img"
+    >
+        <title>Link to U.S. Department of Health and Human Services</title>
         <defs>
             <clipPath id="clip-Web_1920_3">
                 <rect width="307" height="43" />

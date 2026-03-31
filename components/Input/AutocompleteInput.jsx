@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import classes from './Input.module.scss';
 import PropTypes from 'prop-types';
 
@@ -17,6 +17,7 @@ import PropTypes from 'prop-types';
  * @property {Function} setOpenDropdown - will set the dropdown to open or closed
  * @property {Function} onClick - function to tell what to do when user uses mouse to click an option in the dropdown list
  * @property {Function} handleClick - this will run the current query and perform a search with it
+ * @property {String} oldQuery - value of what the user typed in the search bar
  * @returns {JSX} AutocompleteInput Component
  */
 
@@ -34,6 +35,7 @@ const AutocompleteInput = (props) => {
         openDropdown,
         setOpenDropdown,
         placeholder,
+        oldQuery,
     } = props;
 
     const list = useRef();
@@ -137,6 +139,16 @@ const AutocompleteInput = (props) => {
         }
     };
 
+    // when we hover over the option in the dropdown with the mouse, populate the search bar with it
+    const handleMouseEnter = (e) => {
+        setQuery(e.target.innerText);
+    };
+
+    // when we leave the list, set the search bar back to what the user typed beforehand
+    const handleMouseLeave = (e) => {
+        setQuery(oldQuery);
+    };
+
     // used for the listener so we know when the user clicks outside of the dropdown
     useEffect(() => {
         if (openDropdown) {
@@ -162,10 +174,7 @@ const AutocompleteInput = (props) => {
                 placeholder={placeholder}
             />
             {openDropdown && (
-                <ul
-                    role="menu"
-                    className={classes.autocompleteMenu}
-                >
+                <ul role="menu" className={classes.autocompleteMenu}>
                     {items.map((item, index) => (
                         <li
                             key={item._id}
@@ -175,6 +184,8 @@ const AutocompleteInput = (props) => {
                             className={classes.autocompleteMenuItem}
                             // eslint-disable-next-line react/no-unknown-property
                             index={index}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
                             onClick={handleItemClick}
                             onKeyDown={handleItemKeyDown}
                         >
@@ -191,10 +202,13 @@ AutocompleteInput.propTypes = {
     ariaLabel: PropTypes.string,
     handleClick: PropTypes.func,
     homePage: PropTypes.bool,
-    items: PropTypes.arrayOf(PropTypes.shape({
-        _id: PropTypes.string,
-        text: PropTypes.string,
-    })),
+    items: PropTypes.arrayOf(
+        PropTypes.shape({
+            _id: PropTypes.string,
+            text: PropTypes.string,
+        })
+    ),
+    oldQuery: PropTypes.string,
     onChange: PropTypes.func,
     onClick: PropTypes.func,
     onKeyDown: PropTypes.func,
@@ -204,5 +218,5 @@ AutocompleteInput.propTypes = {
     setOpenDropdown: PropTypes.func,
     setQuery: PropTypes.func,
 };
- 
+
 export default AutocompleteInput;

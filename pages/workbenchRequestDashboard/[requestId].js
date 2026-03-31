@@ -3,6 +3,7 @@ import WorkbenchRequestDetailsPage from '../../views/WorkbenchRequest/WorkbenchR
 import logger from '../../lib/logger';
 import axios from 'axios';
 import { GET_WORKBENCH_REQUEST } from '../../constants/apiRoutes';
+import Cookies from 'js-cookie';
 
 const WorkbenchRequestDetailsInfo = (props) => <WorkbenchRequestDetailsPage {...props} />;
 
@@ -23,7 +24,16 @@ export async function getServerSideProps(context) {
         workbenchRequestData = getWorkbenchRequestReponse.data;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            if (e?.response?.status === 401) {
+                Cookies.remove('chocolateChip');
+            }
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -35,6 +45,7 @@ export async function getServerSideProps(context) {
         props: {
             requestId,
             workbenchRequestData,
+            pageTitle: 'Workbench Request'
         },
     };
 }

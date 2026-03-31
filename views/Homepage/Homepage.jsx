@@ -12,10 +12,10 @@ import ExternalLinkIcon from '../../components/ExternalLinkIcon/ExternalLinkIcon
 import NewStudiesIcon from '../../components/Images/svg/NewStudiesIcon';
 import NewFilesIcon from '../../components/Images/svg/NewFilesIcon';
 import UpdatedFilesIcon from '../../components/Images/svg/UpdatedFilesIcon';
-import RADxUpStatIcon from '../../components/Images/svg/RADxUpStatIcon';
-import RADxRadStatIcon from '../../components/Images/svg/RADxRadStatIcon';
-import RADxTechStatIcon from '../../components/Images/svg/RADxTechStatIcon';
-import RADxDHTStatIcon from '../../components/Images/svg/RADxDHTStatIcon';
+import UpStatIcon from '../../components/Images/svg/UpStatIcon';
+import RadStatIcon from '../../components/Images/svg/RadStatIcon';
+import TechStatIcon from '../../components/Images/svg/TechStatIcon';
+import DHTStatIcon from '../../components/Images/svg/DHTStatIcon';
 import { getTypeIcon } from '../../lib/componentHelpers/EventsFunctions/getTypeIcon';
 import { useRouter } from 'next/router';
 import parse from 'html-react-parser';
@@ -60,11 +60,15 @@ const Homepage = (props) => {
 
     // Search Bar
     const [query, setQuery] = useState('');
+    const [sorting, setSorting] = useState({
+        sort: 'desc',
+        field: 'relevance',
+    });
 
     const handleSearch = (query) => {
         sendGAEvent('event', 'homePage', { value: 'Home Page Search Made', query: JSON.stringify(query) });
-        const searchQuery = buildSearchQuery({ query, pagination: { size: 50, page: 1 } });
-        router.push(`/studyExplorer?${searchQuery}`);
+        const searchQuery = buildSearchQuery({ query, pagination: { size: 50, page: 1 }, sorting, setSorting, view: 'table' });
+        router.push(`/studyExplorer/studies?${searchQuery}`);
     };
 
     // STATS
@@ -75,10 +79,10 @@ const Homepage = (props) => {
         });
     };
 
-    const up = getStat('RADx-UP');
-    const rad = getStat('RADx-rad');
-    const tech = getStat('RADx Tech');
-    const dht = getStat('RADx DHT');
+    const up = getStat('UP') || { name: 'UP', studyCount: 0, totalFileSize: 0, dataFileCount: 0, documentCount: 0 };
+    const rad = getStat('rad') || { name: 'rad', studyCount: 0, totalFileSize: 0, dataFileCount: 0, documentCount: 0 };
+    const tech = getStat('Tech') || { name: 'Tech', studyCount: 0, totalFileSize: 0, dataFileCount: 0, documentCount: 0 };
+    const dht = getStat('DHT') || { name: 'DHT', studyCount: 0, totalFileSize: 0, dataFileCount: 0, documentCount: 0 };
 
     // FUNDING, NEWS, EVENTS
 
@@ -86,11 +90,11 @@ const Homepage = (props) => {
         return (
             <div key={item.title}>
                 <h6>
-                    <Link href={`fundingOpportunities#${item.slug}`} legacyBehavior>
+                    <a href={item.linkUrl} target="_blank" rel="noopener noreferrer">
                         {item.title}
-                    </Link>
+                    </a>
                 </h6>
-                <div>{parse(regexReplace(item.description, item.links))}</div>
+                <div>{item.description}</div>
             </div>
         );
     });
@@ -101,7 +105,8 @@ const Homepage = (props) => {
                 <h6>
                     <Link href={`news/${item.slug}`} legacyBehavior>
                         {item.title}
-                    </Link>
+                    </Link>{' '}
+                    | {format(new Date(item.startDate), 'P')}
                 </h6>
                 <div>{parse(regexReplace(item.description, item.links))}</div>
             </div>
@@ -179,14 +184,22 @@ const Homepage = (props) => {
                 <div className={classes.heroContent}>
                     <div className={classes.heroText}>
                         <h1>
-                            RADx<span className={classes.registered}>®</span> Data Hub
+                            Data Hub
                         </h1>
                         <div>
-                            The NIH Rapid Acceleration of Diagnostics Data Hub (RADx Data Hub) is a centralized data repository that
-                            provides access to analytic tools and de-identified COVID-19 data from the RADx Initiative. The RADx Data Hub
-                            supports scientific efforts to better understand COVID-19 and factors associated with disparities in morbidity
-                            and mortality in underserved and vulnerable populations, by allowing researchers to discover, access, and
-                            perform analyses of COVID-19 datasets in a cloud-enabled platform.
+                            The Data Hub is a secure, cloud-based platform accelerating
+                            innovation in public health by enabling data sharing, exploration, and analysis. By providing analytic tools and
+                            access to de-identified data from{' '}
+                            <a
+                                href="https://www.nih.gov/research-training/medical-research-initiatives/radx/programs"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Initiative programs
+                            </a>
+                            , the Data Hub supports data-driven insights and cross-sector collaboration. Researchers can discover studies,
+                            access curated and harmonized data, and use integrated tools to analyze data in new ways, informing public
+                            health strategies and strengthening health system preparedness.
                         </div>
                     </div>
                     <div className={classes.searchBarContainer}>
@@ -203,8 +216,8 @@ const Homepage = (props) => {
                         <Link href="/about">
                             <Card
                                 cardClassOverride={classes.blogCard}
-                                title="About the RADx Data Hub"
-                                subtitle="Learn more about the RADx Data Hub"
+                                title="About the Data Hub"
+                                subtitle="Learn more about the Data Hub"
                                 footer={
                                     <div>
                                         Read More <ChevronRightIcon />
@@ -213,7 +226,7 @@ const Homepage = (props) => {
                                 variant="blog"
                                 image={{
                                     src: '/images/about_collage.png',
-                                    alt: 'This is a caption for the Image',
+                                    alt: '',
                                     width: '320px',
                                     height: '170px',
                                 }}
@@ -225,7 +238,7 @@ const Homepage = (props) => {
                             <Card
                                 cardClassOverride={classes.blogCard}
                                 title="User Tutorial"
-                                subtitle="For those who are new to the RADx Data Hub, we highly recommend taking a moment to explore the comprehensive RADx Data Hub Tutorial"
+                                subtitle="For those who are new to the Data Hub, we highly recommend taking a moment to explore the comprehensive Data Hub Tutorial"
                                 footer={
                                     <div>
                                         Read More <ChevronRightIcon />
@@ -233,8 +246,8 @@ const Homepage = (props) => {
                                 }
                                 variant="blog"
                                 image={{
-                                    src: '/images/New_RADx_Img.jpeg',
-                                    alt: 'This is a caption for the Image',
+                                    src: '/images/New_Img.jpeg',
+                                    alt: '',
                                     width: '320px',
                                     height: '170px',
                                 }}
@@ -246,7 +259,7 @@ const Homepage = (props) => {
                             <Card
                                 cardClassOverride={classes.blogCard}
                                 title="Frequently Asked Questions (FAQ)"
-                                subtitle="Browse the collection of answers to frequently asked questions about the RADx Data Hub"
+                                subtitle="Browse the collection of answers to frequently asked questions about the Data Hub"
                                 footer={
                                     <div>
                                         Read More <ChevronRightIcon />
@@ -255,7 +268,7 @@ const Homepage = (props) => {
                                 variant="blog"
                                 image={{
                                     src: '/images/FAQ_Img.jpeg',
-                                    alt: 'This is a caption for the Image',
+                                    alt: '',
                                     width: '320px',
                                     height: '170px',
                                 }}
@@ -326,7 +339,7 @@ const Homepage = (props) => {
                     <Col md={12} lg={12}>
                         <Card
                             cardClassOverride={classes.infoCard}
-                            title="News"
+                            title="Latest News &amp; Updates"
                             footer={
                                 <Link href="/news">
                                     <Button label="View All" variant="homepage" size="auto" iconRight={<ChevronRightIcon />} />
@@ -346,7 +359,7 @@ const Homepage = (props) => {
                 <Col className={classes.section}>
                     <div className={classes.statsBanner}>
                         <Container className={classes.Container}>
-                            <h2>RADx Data Hub Content</h2>
+                            <h2>Data Hub Content</h2>
                             <div className={classes.statsSummary}>
                                 <p>{stats.totalFiles} Total Files</p>
                                 <p>{stats.totalStudies} Total Studies</p>
@@ -370,16 +383,16 @@ const Homepage = (props) => {
                                     <Col md={6} sm={12}>
                                         <div className={classes.stat}>
                                             <h1 className={`${classes.statTitle} ${classes.pink}`}>
-                                                <a href="https://radx-up.org/" target="_blank" rel="noopener noreferrer">
+                                                <a href="https://up.org/" target="_blank" rel="noopener noreferrer">
                                                     {up.name}
                                                 </a>
                                                 <ExternalLinkIcon width="15" height="15" />
                                             </h1>
                                             <div className={`${classes.dccDescription} ${classes.gray}`}>
-                                                Studying COVID-19 testing patterns in underserved populations.
+                                                Studying testing patterns in a variety of populations.
                                             </div>
                                             <div className={classes.statMiddleContent}>
-                                                <RADxUpStatIcon />
+                                                <UpStatIcon />
                                                 <div className={classes.statMiddleContentText}>
                                                     <p className={classes.gray} data-testid="UP-dataFiles">
                                                         {up.dataFileCount} Data Files{' '}
@@ -404,10 +417,10 @@ const Homepage = (props) => {
                                                 <ExternalLinkIcon width="15" height="15" />
                                             </h1>
                                             <div className={`${classes.dccDescription} ${classes.gray}`}>
-                                                Supporting innovative, non-traditional (radical) COVID-19 diagnostic approaches.
+                                                Supporting innovative, non-traditional (radical) approaches to improve disease diagnostics.
                                             </div>
                                             <div className={classes.statMiddleContent}>
-                                                <RADxRadStatIcon />
+                                                <RadStatIcon />
                                                 <div className={classes.statMiddleContentText}>
                                                     <p className={classes.gray} data-testid="Rad-dataFiles">
                                                         {rad.dataFileCount} Data Files{' '}
@@ -429,7 +442,7 @@ const Homepage = (props) => {
                                         <div className={classes.stat}>
                                             <h1 className={`${classes.statTitle} ${classes.purple}`}>
                                                 <a
-                                                    href="https://www.nibib.nih.gov/covid-19/radx-tech-program"
+                                                    href="https://www.nibib.nih.gov/covid-19/tech-program"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
@@ -438,10 +451,11 @@ const Homepage = (props) => {
                                                 <ExternalLinkIcon width="15" height="15" />
                                             </h1>
                                             <div className={`${classes.dccDescription} ${classes.gray}`}>
-                                                Speeding the development, validation, and commercialization of COVID-19 tests.
+                                                Speeding diagnostic test development, validation, and commercialization to enhance public
+                                                health.
                                             </div>
                                             <div className={classes.statMiddleContent}>
-                                                <RADxTechStatIcon />
+                                                <TechStatIcon />
                                                 <div className={classes.statMiddleContentText}>
                                                     <p className={classes.gray} data-testid="Tech-dataFiles">
                                                         {tech.dataFileCount} Data Files{' '}
@@ -466,10 +480,10 @@ const Homepage = (props) => {
                                                 <ExternalLinkIcon width="15" height="15" />
                                             </h1>
                                             <div className={`${classes.dccDescription} ${classes.gray}`}>
-                                                Developing digital health solutions to identify, trace, and monitor infected individuals.
+                                                Developing digital health solutions for real-time health monitoring and decision-making.
                                             </div>
                                             <div className={classes.statMiddleContent}>
-                                                <RADxDHTStatIcon />
+                                                <DHTStatIcon />
                                                 <div className={classes.statMiddleContentText}>
                                                     <p className={classes.gray} style={{ width: '155px' }}>
                                                         Stored in RAPIDS Repository
@@ -489,9 +503,9 @@ const Homepage = (props) => {
             </Row>
             <Container>
                 <Col lg={12}>
-                    <Card title="RADx Study Updates" headerImg="/images/large1.png" variant="info" bkgdColor="#E6E6E6">
+                    <Card title="Study Updates" headerImg="/images/large1.png" variant="info" bkgdColor="#E6E6E6">
                         <Row className={classes.contentUpdates}>
-                            {newStudies.length > 0 && (
+                            {newStudies?.length > 0 && (
                                 <Col md={12} lg={12 / numOfContentCategories}>
                                     <Card
                                         cardClassOverride={classes.contentCard}
@@ -509,7 +523,7 @@ const Homepage = (props) => {
                                     </Card>
                                 </Col>
                             )}
-                            {newFiles.length > 0 && (
+                            {newFiles?.length > 0 && (
                                 <Col md={12} lg={12 / numOfContentCategories}>
                                     <Card
                                         cardClassOverride={classes.contentCard}
@@ -519,7 +533,7 @@ const Homepage = (props) => {
                                                 Studies with New Files
                                             </span>
                                         }
-                                        headerColor="#298CA3"
+                                        headerColor="#1e8198"
                                         variant="info"
                                         bodyHeight="250px"
                                         scroll={true}
@@ -528,7 +542,7 @@ const Homepage = (props) => {
                                     </Card>
                                 </Col>
                             )}
-                            {updatedFiles.length > 0 && (
+                            {updatedFiles?.length > 0 && (
                                 <Col md={12} lg={12 / numOfContentCategories}>
                                     <Card
                                         cardClassOverride={classes.contentCard}

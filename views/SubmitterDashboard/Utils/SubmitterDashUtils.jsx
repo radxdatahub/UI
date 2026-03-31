@@ -7,13 +7,13 @@ export const submission = [
     },
     {
         id: 1667,
-        studyName: 'This is an NIH Study',
+        studyName: 'This is a Study',
         status: 'In Progress',
         createdDate: '2023-12-25',
     },
     {
         id: 1670,
-        studyName: 'RADx-UP New Study For Sure',
+        studyName: 'New Study For Sure',
         status: 'Submitted',
         createdDate: '2023-12-25',
     },

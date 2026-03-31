@@ -6,6 +6,7 @@ import { GET_USER_ACTIVITIES, GET_USER_ACTIVITIES_CSV } from '../../constants/ap
 import { generateMetricsRows } from '../../lib/componentHelpers/TableHelpers/metricsTableHelpers';
 import { monthAgo, weekAgo } from '../../views/Metrics/Constants/MetricsConstants';
 import { format } from 'date-fns';
+import Cookies from 'js-cookie';
 
 const MetricsHub = (props) => <Metrics {...props} />;
 
@@ -28,7 +29,7 @@ export async function getServerSideProps(context) {
         startDate = monthAgo;
         endDate = format(new Date(), 'yyyy-MM-dd');
     } else if (time === 'AllTime') {
-        startDate = format(new Date('December 01, 2022 00:00:01'), 'yyyy-MM-dd');
+        startDate = format(new Date('December 01, 2019 00:00:01'), 'yyyy-MM-dd');
         endDate = format(new Date(), 'yyyy-MM-dd');
     }
 
@@ -55,7 +56,16 @@ export async function getServerSideProps(context) {
             tableColumns = getUserActivitiesResponse.data.headers;
         } catch (e) {
             logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
-            if ([400, 401, 403].includes(e?.response?.status)) {
+            if ([404, 500].includes(e?.response?.status)) {
+                return {
+                    redirect: {
+                        destination: `/${e?.response?.status}`,
+                    },
+                };
+            } else if ([400, 401, 403].includes(e?.response?.status)) {
+                if (e?.response?.status === 401) {
+                    Cookies.remove('chocolateChip');
+                }
                 return {
                     redirect: {
                         destination: `/?e=${e?.response?.status}`,
@@ -75,6 +85,7 @@ export async function getServerSideProps(context) {
             initData: { time: time || 'Custom', from: startDate, to: endDate },
             redirectString: '/metrics/UserActivities',
             CSV_URL: GET_USER_ACTIVITIES_CSV.replace('[startDate]', startDate).replace('[endDate]', endDate),
+            pageTitle: 'Metrics'
         },
     };
 }

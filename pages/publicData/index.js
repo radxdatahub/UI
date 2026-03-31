@@ -11,7 +11,6 @@ export async function getServerSideProps(context) {
     const { req } = context;
     let publicData = [];
     let hasWorkbench;
-    const baseUrl = process.env.DEV_URL;
 
     logger.info('Calling GET_PUBLIC_DATA: %s', GET_PUBLIC_DATA);
     try {
@@ -25,7 +24,13 @@ export async function getServerSideProps(context) {
         publicData = publicDataResponse.data.collections;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -38,7 +43,7 @@ export async function getServerSideProps(context) {
         props: {
             publicData,
             hasWorkbench,
-            baseUrl,
+            pageTitle: 'Public Data Access',
         },
     };
 }

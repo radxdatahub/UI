@@ -34,6 +34,7 @@ const LogoutModal = (props) => {
                 Cookies.remove('chocolateChip');
                 dispatch(setUser(null));
                 closeModal();
+                router.reload();
                 router.push('/');
             }
         } catch (e) {}

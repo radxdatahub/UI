@@ -3,13 +3,13 @@ import DataIngest from '../../views/DataIngest/DataIngest';
 import logger from '../../lib/logger';
 import { GET_SUBMISSION_INFO, GET_UPLOADED_FILES, GET_CATEGORIES, GET_BUNDLES, GET_RESOURCE_CENTER_BUCKET } from '../../constants/apiRoutes';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const DataIngestSubmission = (props) => <DataIngest {...props} />;
 
 export async function getServerSideProps(context) {
     logger.defaultMeta.service = 'get_submission_info';
     const { params, req } = context;
-    const baseUrl = process.env.DEV_URL;
     let submissionData = {};
     let uploadedFilesData = {};
     let categoriesData = {};
@@ -28,7 +28,16 @@ export async function getServerSideProps(context) {
         submissionData = submissionInfoResponse.data;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            if (e?.response?.status === 401) {
+                Cookies.remove('chocolateChip');
+            }
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -131,8 +140,8 @@ export async function getServerSideProps(context) {
             bundlesData,
             reviewBundlesData,
             reviewStudyData,
-            baseUrl,
-            fileUploadSOP: `${process.env.DEV_URL}${GET_RESOURCE_CENTER_BUCKET}RADx_Data_Hub-File_Upload_SOP.pdf`,
+            fileUploadSOP: `${process.env.NEXT_PUBLIC_DEV_URL}${GET_RESOURCE_CENTER_BUCKET}test.pdf`,
+            pageTitle: 'Data Submission'
         },
     };
 }

@@ -1,6 +1,6 @@
 /* eslint-disable multiline-ternary */
 /* eslint-disable max-len */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Container } from 'react-bootstrap';
 import { useRouter } from 'next/router';
@@ -12,7 +12,7 @@ import CalloutBox from '../../components/CalloutBox/CalloutBox';
 import ApprovedPublicDataTable from '../../components/Table/ApprovedPublicDataTable';
 import classes from './PublicData.module.scss';
 import { getFileSize } from '../../lib/componentHelpers/TableFunctions/getFileSize';
-import { WORKBENCH_LINK, GET_RESOURCE_CENTER_BUCKET } from '../../constants/apiRoutes';
+import { WORKBENCH_LINK } from '../../constants/apiRoutes';
 
 /**
  * Public Data Page
@@ -103,6 +103,7 @@ const PublicData = (props) => {
                         noHover
                         allowSort
                         baseUrl={baseUrl}
+                        id={collection.id}
                     ></ApprovedPublicDataTable>
                 </div>
             </div>
@@ -134,7 +135,7 @@ const PublicData = (props) => {
                             </div>
                             <div>
                                 For more guidance on applying for add-ons, downloading files, and transferring files to the workbench,
-                                please refer to the <a href={`/tutorial?tutorial=publicData`}>RADx Data Hub User Tutorial.</a>
+                                please refer to the <a href={`/tutorial?tutorial=publicData`}>User Tutorial.</a>
                             </div>
                             <div>
                                 For more guidance on using our tools offerings within the Analytics Workbench, please refer to the{' '}

@@ -87,9 +87,8 @@ const DeleteBundleModal = (props) => {
         if (!openErrorModal) {
             const filesResult = await restGet(DI_GET_BUNDLE_FILES + `?fileId=${fileId}`, {
                 showLoading: true,
-                showSuccess: true,
-                successMessage: 'Successfully got files',
-                errorMessage: 'Error getting files',
+                showSuccess: false,
+                errorMessage: 'Error retrieving all files in bundle',
             });
             if (filesResult.status === 200) {
                 setBundleFiles(filesResult?.data.data.files);
@@ -131,6 +130,7 @@ const DeleteBundleModal = (props) => {
             } else {
                 removeDeletedFile();
                 setOpenErrorModal(!openErrorModal);
+                router.reload();
             }
         }
     };

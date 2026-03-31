@@ -87,7 +87,7 @@ const CuratorForm = (props) => {
                         }}
                         selected={dataSharingInfo === 'Yes'}
                         key="data_sharing_info"
-                        label="RADx Data Sharing & Submission Information"
+                        label="Data Sharing & Submission Information"
                     />
                 </Col>
                 <Col lg={1} />

@@ -6,14 +6,20 @@ import classes from './StudyOverview.module.scss';
 import Banner from '../../components/Banner/Banner';
 import Button from '../../components/Button/Button';
 import InfoIcon from '../../components/Images/svg/InfoIcon';
+import QuestionCircleFilled from '../../components/Images/svg/QuestionCircleFilled';
 import Table from '../../components/Table/Table';
 import RequestAccessModal from './Components/RequestAccessModal';
+import DataFilesModal from './Components/DataFilesModal';
 import MetadataVisualizerModal from './Components/MetadataVisualizerModal';
+import DictionaryVisualizerModal from './Components/DictionaryVisualizerModal';
 import NoticeBox from '../../components/NoticeBox/NoticeBox';
 import useRest from '../../lib/hooks/useRest';
+import { downloadLink } from '../../lib/pageHelpers/downloadLink';
 import { GET_ALL_DOCUMENTS } from '../../constants/apiRoutes';
 import { combineDuplicates, renderList } from './Misc/HelperFunctions';
-import { documentsTable, datasetsTable, variablesSubTable } from './Misc/ColumnDefs';
+import { getFileSize } from '../../lib/componentHelpers/TableFunctions/getFileSize';
+import { documentsTable, datasetsTable, variablesSubTable, variablesInformationTable } from './Misc/ColumnDefs';
+import Link from 'next/link';
 
 /**
  * View for the Study Overview
@@ -36,12 +42,25 @@ const StudyOverview = (props) => {
         setRequestAccessModalVisible(false);
     };
 
+    // Data Files Modal
+    const [dataFilesModalVisible, setDataFilesModalVisible] = useState(false);
+    const closeDataFilesModal = () => {
+        setDataFilesModalVisible(false);
+    };
+
     // Metadata Visualizer Modal
     const [metadataModalVisible, setMetadataModalVisible] = useState(false);
     const closeMetadataModal = () => {
         setMetadataModalVisible(false);
     };
     const [metadataFile, setMetadataFile] = useState('');
+
+    // Dictionary Visualizer Modal
+    const [dictModalVisible, setDictModalVisible] = useState(false);
+    const closeDictModal = () => {
+        setDictModalVisible(false);
+    };
+    const [dictFile, setDictFile] = useState('');
 
     const crumbs = [
         {
@@ -51,7 +70,7 @@ const StudyOverview = (props) => {
         },
         {
             page: 'Study Explorer',
-            pageLink: '/studyExplorer',
+            pageLink: '/studyExplorer/studies',
             ariaLabel: 'Study Explorer',
         },
         {
@@ -60,28 +79,39 @@ const StudyOverview = (props) => {
         },
     ];
 
-    const { Title, Detail, Representative } = studyData;
+    const { Title, Detail, Representative } = studyData.props;
+
     const representativeData = renderList(Representative);
     const detailData = renderList(combineDuplicates(Detail));
 
-    let studyName = Title.find((x) => x.label === 'Study Name');
-    let studySize = Title.find((x) => x.label === 'Study Size (MB)');
-    let rapidsLink = Representative.find((x) => x.label === 'RAPIDS Link');
-    let phsLink = Representative.find((x) => x.label === 'dbGaP Study Accession');
+    const studyName = Title.find((x) => x.label === 'Study Name');
+    const studySize = Title.find((x) => x.label === 'Study Size (MB)');
+    const rapidsLink = Representative.find((x) => x.label === 'RAPIDS Link');
+    const phsLink = Representative.find((x) => x.label === 'dbGaP Study Accession');
+
+    // Get study size by converting MB into bytes and using getFileSize to get the most readable unit/magnitude
+    const formattedSize = studySize ? getFileSize(Number(studySize.propertyValue[0] * 1024 * 1024), 0) : null;
 
     // Not all studies have a Study Size (ex: DHT studies). This is to assign the banner variables properly even with missing data
-    const pageTitle = studySize ? `${studyName.propertyValue[0]} (${studySize.propertyValue[0]} MB)` : `${studyName.propertyValue[0]}`;
+    const pageTitle = formattedSize ? `${studyName.propertyValue[0]} (${formattedSize})` : `${studyName.propertyValue[0]}`;
 
     // STUDY DOCUMENTS TABLE
-    const documentsTableColumns = documentsTable(studyId, baseUrl);
+    const documentsTableColumns = documentsTable(studyId, baseUrl, restGet);
 
     // STUDY DATASETS TABLE
-    const datasetsTableColumns = datasetsTable(baseUrl, setMetadataModalVisible, setMetadataFile, restGet);
+    const datasetsTableColumns = datasetsTable(
+        baseUrl,
+        setMetadataModalVisible,
+        setMetadataFile,
+        setDictModalVisible,
+        setDictFile,
+        restGet
+    );
 
     let totalFiles, dataFiles, metaFiles, dictFiles;
     totalFiles = dataFiles = metaFiles = dictFiles = 0;
 
-    studyDatasets.forEach((dataFile) => {
+    studyDatasets.dataFileDTOS.forEach((dataFile) => {
         totalFiles++;
         dataFiles++;
         if (dataFile.dictionaryFileId) {
@@ -95,15 +125,17 @@ const StudyOverview = (props) => {
     });
 
     const renderSubComponent = ({ row }) => {
+        const renderVariables = row.original.dataVariables.split(/,|;/).map((variable) => {
+            return <li key={variable}>{variable}</li>;
+        });
+
         return (
-            <Table
-                className={classes.variablesTable}
-                tableRows={[row.original]}
-                tableHeaders={variablesSubTable}
-                ariaCaption="Variables Table"
-                noHover
-                responsive={false}
-            ></Table>
+            <div className={classes.variablesSubRow}>
+                <div className={classes.variablesHeader}>Variable Names</div>
+                <div className={classes.variablesBody}>
+                    <ul className={classes.variablesList}>{renderVariables}</ul>
+                </div>
+            </div>
         );
     };
 
@@ -121,6 +153,32 @@ const StudyOverview = (props) => {
                     </Container>
                 </div>
 
+                {studyData.variables.length > 0 && (
+                    <>
+                        <div className={classes.divider}>
+                            <Container>Variable Information</Container>
+                        </div>
+                        <div className={classes.section}>
+                            <Container className={classes.Container}>
+                                <div className={classes.buttonSection}>
+                                    <span className={classes.bold}>Total Variables:</span> {studyData.variables.length}
+                                </div>
+                                <Table
+                                    className={`${classes.tableContainer} ${classes.variablesInformation}`}
+                                    tableRows={studyData.variables}
+                                    tableHeaders={variablesInformationTable}
+                                    ariaCaption="Study Variables Information Table"
+                                    noHover
+                                    allowSort
+                                    responsive={false}
+                                    modification="offWhite"
+                                    variant="narrow"
+                                ></Table>
+                            </Container>
+                        </div>
+                    </>
+                )}
+
                 {studyDocuments.length > 0 && (
                     <>
                         <div className={classes.divider}>
@@ -129,9 +187,7 @@ const StudyOverview = (props) => {
                         <div className={classes.section}>
                             <Container className={classes.Container}>
                                 <div className={`pullRight ${classes.buttonSection}`}>
-                                    <a href={`${baseUrl}${GET_ALL_DOCUMENTS.replace('[studyID]', studyId)}`} download>
-                                        <Button label="Download All" variant="primary" size="auto" handleClick={() => {}}></Button>
-                                    </a>
+                                    <Button label="Download All" variant="primary" size="auto" handleClick={async () => {}}></Button>
                                 </div>
                                 <Table
                                     className={classes.tableContainer}
@@ -176,23 +232,46 @@ const StudyOverview = (props) => {
                                 />
                             </>
                         )}
-                        {!rapidsLink && studyDatasets.length === 0 && (
+                        {!rapidsLink && studyDatasets.dataFileDTOS.length === 0 && (
                             <NoticeBox
                                 className={classes.noticeBox}
                                 body={<div>This study currently has no data files. Please check back at a later date.</div>}
                             />
                         )}
-                        {studyDatasets.length > 0 && (
+                        {studyDatasets.dataFileDTOS.length > 0 && (
                             <>
-                                <div className={`pullRight ${classes.buttonSection}`}>
-                                    <Button
-                                        className={classes.reqAccessBtn}
-                                        label="How to Request Access"
-                                        variant="primary"
-                                        iconLeft={<InfoIcon />}
-                                        size="auto"
-                                        handleClick={() => setRequestAccessModalVisible(true)}
-                                    ></Button>
+                                <div className={` ${classes.buttonSection} d-flex justify-content-between`}>
+                                    <div>
+                                        <Button
+                                            className={classes.reqAccessBtn}
+                                            label="How to Use Data Files"
+                                            variant="tertiary"
+                                            iconLeft={<QuestionCircleFilled />}
+                                            size="auto"
+                                            handleClick={() => setDataFilesModalVisible(true)}
+                                        ></Button>
+                                    </div>
+                                    <div>
+                                        {studyDatasets.userHasStudyAccess ? (
+                                            <Link href={`/myApprovedData#${studyId}`}>
+                                                <Button
+                                                    className={classes.reqAccessBtns}
+                                                    label="View Approved Data"
+                                                    variant="primary"
+                                                    size="auto"
+                                                />
+                                            </Link>
+                                        ) : (
+                                            <Button
+                                                className={classes.reqAccessBtn}
+                                                label="How to Request Access"
+                                                variant="primary"
+                                                iconLeft={<InfoIcon />}
+                                                size="auto"
+                                                handleClick={() => setRequestAccessModalVisible(true)}
+                                            ></Button>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className={classes.datasetStats}>
                                     <div>
@@ -212,7 +291,7 @@ const StudyOverview = (props) => {
                                 </div>
                                 <Table
                                     className={classes.tableContainer}
-                                    tableRows={studyDatasets}
+                                    tableRows={studyDatasets.dataFileDTOS}
                                     tableHeaders={datasetsTableColumns}
                                     ariaCaption="Study Datasets Table"
                                     noHover
@@ -234,7 +313,9 @@ const StudyOverview = (props) => {
                 rapidsLink={rapidsLink}
                 dbGapLink={phsLink}
             />
+            <DataFilesModal visible={dataFilesModalVisible} closeModal={closeDataFilesModal} baseUrl={baseUrl} />
             <MetadataVisualizerModal visible={metadataModalVisible} closeModal={closeMetadataModal} metadataFile={metadataFile} />
+            <DictionaryVisualizerModal visible={dictModalVisible} closeModal={closeDictModal} dictFile={dictFile} />
         </>
     );
 };
@@ -242,7 +323,7 @@ const StudyOverview = (props) => {
 StudyOverview.propTypes = {
     baseUrl: PropTypes.string,
     studyData: PropTypes.object,
-    studyDatasets: PropTypes.array,
+    studyDatasets: PropTypes.object,
     studyDocuments: PropTypes.array,
     studyId: PropTypes.string,
 };

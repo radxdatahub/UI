@@ -1,3 +1,5 @@
+import classes from '../StudyOverview.module.scss';
+
 // Concatenate values of duplicate properties to form new list
 export const combineDuplicates = (data) => {
     const newDataList = [];

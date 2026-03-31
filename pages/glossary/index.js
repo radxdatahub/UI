@@ -4,11 +4,13 @@ import logger from '../../lib/logger';
 
 const GlossaryPage = (props) => <Glossary {...props} />;
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
     logger.defaultMeta.service = 'Glossary';
 
     return {
-        props: {},
+        props: {
+            pageTitle: 'Glossary',
+        },
     };
 }
 

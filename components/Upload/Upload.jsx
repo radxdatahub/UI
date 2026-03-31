@@ -15,16 +15,17 @@ import UploadCloud from '../Images/svg/UploadCloud';
  * @property {String} label - Label property for the text on the upload button
  * @property {String} buttonClass - Class name for styling of the button
  * @property {Boolean} icon - whether to include the cloud upload icon or not
+ * @property {Boolean} disabled - whether to disable button or not
  * @returns {JSX} Upload Component
  */
 
 const Upload = (props) => {
-    const { multiple, handleChange, accept, id, ariaLabel, className, label, buttonClass, icon } = props;
+    const { multiple, handleChange, accept, id, ariaLabel, className, label, buttonClass, icon, disabled } = props;
 
     return (
         <>
             <label htmlFor={id}>
-                <span className={buttonClass || classes.uploadButton}>
+                <span className={`${buttonClass || classes.uploadButton} ${disabled ? classes.disabled : ''}`}>
                     {icon && <UploadCloud className={classes.uploadIcon} />}
                     {label}
                 </span>
@@ -37,6 +38,7 @@ const Upload = (props) => {
                 onChange={handleChange}
                 aria-label={ariaLabel}
                 className={`${classes.fileUpload} ${className}`}
+                disabled={disabled}
             />
         </>
     );
@@ -56,6 +58,7 @@ Upload.propTypes = {
     ariaLabel: PropTypes.string,
     buttonClass: PropTypes.string,
     className: PropTypes.string,
+    disabled: PropTypes.bool,
     handleChange: PropTypes.func.isRequired,
     icon: PropTypes.bool,
     id: PropTypes.string,

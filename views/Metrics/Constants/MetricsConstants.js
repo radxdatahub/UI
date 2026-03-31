@@ -9,11 +9,11 @@ today = new Date();
 export const menuItems = [
     {
         label: 'Hub Content',
-        value: 'HubContent?&aggBy=dcc&yi=0&mi=0&ri=0',
+        value: 'HubContent',
     },
     {
         label: 'Harmonization Outcomes',
-        value: 'Harmonization?&aggBy=study&yi=0&mi=0&ri=0',
+        value: 'Harmonization',
     },
     {
         label: 'Submission Activities',

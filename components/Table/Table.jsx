@@ -90,7 +90,8 @@ const Table = (props) => {
 
     // placeholder for potential future functionality
     switch (variant) {
-        case 'lite':
+        case 'narrow':
+            tableClass += ` ${classes.narrowPadding} ${classes.container}`;
             break;
         case 'full':
             break;
@@ -105,6 +106,9 @@ const Table = (props) => {
     switch (modification) {
         case 'offWhite':
             tableClass += ` ${classes.offWhite}`;
+            break;
+        case 'allWhite':
+            tableClass += ` ${classes.allWhite}`;
             break;
         default:
             break;
@@ -139,8 +143,18 @@ const Table = (props) => {
                                             }}
                                         >
                                             {allowSort ? (
-                                                <div className={classes.row}>
-                                                    <div className={`${classes.sortTextHeader} ${classes.textHeader}`}>
+                                                <div
+                                                    className={`${classes.row} ${
+                                                        header.column.columnDef.removeSort && !header.column.columnDef.alignLeft
+                                                            ? 'justify-content-center'
+                                                            : ''
+                                                    }`}
+                                                >
+                                                    <div
+                                                        className={`${classes.textHeader} ${
+                                                            header.column.columnDef.removeSort ? '' : `${classes.sortTextHeader}`
+                                                        }`}
+                                                    >
                                                         {flexRender(header.column.columnDef.header, header.getContext())}
                                                         {header.column.columnDef.tooltip && (
                                                             <Tooltip
@@ -154,14 +168,24 @@ const Table = (props) => {
                                                             </Tooltip>
                                                         )}
                                                     </div>
-                                                    <div className={`${classes.sortHeader}`}>
-                                                        {allowSort && !header.column.columnDef.removeSort
-                                                            ? {
-                                                                  asc: <SortIcon asc={true} />,
-                                                                  desc: <SortIcon asc={false} />,
-                                                              }[header.column.getIsSorted()] ?? <SortIcon unSorted={true} />
-                                                            : null}
-                                                    </div>
+                                                    {!header.column.columnDef.removeSort
+                                                        ? {
+                                                              asc: (
+                                                                  <div className={`${classes.sortHeader}`}>
+                                                                      <SortIcon asc={true} />
+                                                                  </div>
+                                                              ),
+                                                              desc: (
+                                                                  <div className={`${classes.sortHeader}`}>
+                                                                      <SortIcon asc={false} />
+                                                                  </div>
+                                                              ),
+                                                          }[header.column.getIsSorted()] ?? (
+                                                              <div className={`${classes.sortHeader}`}>
+                                                                  <SortIcon unSorted={true} />
+                                                              </div>
+                                                          )
+                                                        : null}
                                                 </div>
                                             ) : (
                                                 <div className={classes.textHeader}>
@@ -190,15 +214,27 @@ const Table = (props) => {
                 <tbody>
                     {table.getRowModel().rows.map((row) => (
                         <React.Fragment key={row.id}>
-                            <tr className={noHover ? `${classes.noHover}` : ''}>
-                                {row.getVisibleCells().map((cell) => (
-                                    <td
-                                        tabIndex="0"
-                                        key={cell.id}
-                                        className={cell.column.columnDef.alignLeft ? `${classes.alignLeft}` : ''}
-                                    >
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </td>
+                            <tr className={noHover ? `${classes.noHover}` : ''} role="row">
+                                {row.getVisibleCells().map((cell, id) => (
+                                    <>
+                                        {id === 0 ? (
+                                            <th
+                                                tabIndex="0"
+                                                key={cell.id}
+                                                className={cell.column.columnDef.alignLeft ? `${classes.alignLeft}` : ''}
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </th>
+                                        ) : (
+                                            <td
+                                                tabIndex="0"
+                                                key={cell.id}
+                                                className={cell.column.columnDef.alignLeft ? `${classes.alignLeft}` : ''}
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </td>
+                                        )}
+                                    </>
                                 ))}
                             </tr>
                             {row.getIsExpanded() && (
@@ -216,12 +252,20 @@ const Table = (props) => {
                         </React.Fragment>
                     ))}
                     {totalRow && (
-                        <tr key="total" className={noHover ? `${classes.noHover}` : ''}>
+                        <tr key="total" className={noHover ? `${classes.noHover}` : ''} role="row">
                             {/* eslint-disable-next-line react/prop-types */}
-                            {totalRow.map((totalCell) => (
-                                <td tabIndex="0" key={`total-subCell-${totalCell}-${uniqueId()}`} className={classes.alignLeft}>
-                                    {totalCell}
-                                </td>
+                            {totalRow.map((totalCell, id) => (
+                                <>
+                                    {id === 0 ? (
+                                        <th tabIndex="0" key={`total-subCell-${totalCell}-${uniqueId()}`} className={classes.alignLeft}>
+                                            {totalCell}
+                                        </th>
+                                    ) : (
+                                        <td tabIndex="0" key={`total-subCell-${totalCell}-${uniqueId()}`} className={classes.alignLeft}>
+                                            {totalCell}
+                                        </td>
+                                    )}
+                                </>
                             ))}
                         </tr>
                     )}
@@ -257,7 +301,7 @@ Table.propTypes = {
     ).isRequired,
     tableRows: PropTypes.arrayOf(PropTypes.object).isRequired,
     totalRow: PropTypes.array,
-    variant: PropTypes.oneOf(['lite', 'full', 'dataIngest']),
+    variant: PropTypes.oneOf(['narrow', 'full', 'dataIngest']),
 };
 
 export default Table;

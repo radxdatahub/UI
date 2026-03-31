@@ -5,7 +5,7 @@ import { Container, Row } from 'react-bootstrap';
 import { useRouter } from 'next/router';
 import Button from '../../components/Button/Button';
 import DownloadIcon from '../../components/Images/svg/DownloadIcon';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import siteMapImage from '../../public/images/site_map.png';
 import siteMapDownloadImage from '../../public/images/site_map.pdf';
 
@@ -17,16 +17,15 @@ const SiteMap = (props) => {
             <Banner title="Site Map" variant="virus3" ariaLabel="site map" path={router.asPath} />
             <Container>
                 <Row className={classes.titleGap}>
-                    <span className={classes.title}>RADx Data Hub Site Map</span>
+                    <span className={classes.title}>Site Map</span>
                     <span className={`${classes.body} narrowTextBackground`}>
-                        The NIH Rapid Acceleration of Diagnostics Data Hub (RADx Data Hub) supports researchers in accessing curated and
-                        de-identified COVID-19 data, allowing them to find, aggregate, and perform data analyses in a cloud-enabled
-                        platform.
+                        The site supports researchers in accessing curated and de-identified data, allowing them to find, aggregate, and
+                        perform data analyses in a cloud-enabled platform.
                     </span>
                 </Row>
                 <Row className={classes.buttonGap}>
                     <span className={classes.buttonText}>Available for download as a PDF:</span>
-                    <a href={siteMapDownloadImage} target="_blank" rel="noopener noreferrer" download="RADx_Data_Hub_SiteMap.pdf">
+                    <a href="" target="_blank" rel="noopener noreferrer" download="">
                         <Button
                             label="Download PDF [502 KB]"
                             ariaLabel="Download PDF [502 KB]"
@@ -41,7 +40,7 @@ const SiteMap = (props) => {
                 </Row>
                 <Row className={classes.imageGap}>
                     <div className="narrowTextBackground">
-                        <Image priority src={siteMapImage} />
+                        <Image priority src="" />
                     </div>
                 </Row>
             </Container>

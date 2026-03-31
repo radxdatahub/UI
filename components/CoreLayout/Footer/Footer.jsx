@@ -17,7 +17,7 @@ import HHSLogo from '../../Images/svg/hhsLogo';
  * @returns {JSX} Page Footer Component
  */
 
-export default function Footer({ useColorfulVariant, siteUrl }) {
+export default function Footer({ useColorfulVariant, baseUrl }) {
     return (
         <>
             <footer className={classes.footer}>
@@ -27,76 +27,49 @@ export default function Footer({ useColorfulVariant, siteUrl }) {
                     <Container>
                         <Row className="mb-2">
                             <Col sm={4} className={`${classes.column} ${classes.multiRow} `}>
-                                <p className={`${classes.columnTitle} ${classes.gray}`}>RADx Data Hub</p>
-                                <Link href="/support">Contact Us</Link>
+                                <p className={`${classes.columnTitle} ${classes.gray}`}>Site</p>
+                                <Link href="/support">Need Support?</Link>
                                 <Link href="/about">About</Link>
                                 <Link href="/faq">Frequently Asked Questions</Link>
-                                <Link href="/studyExplorer">Study Explorer</Link>
-                                <Link href="/siteMap">Site Map</Link>
+                                <Link href="/studyExplorer/studies">Study Explorer</Link>
                                 <Link href="/news">News</Link>
                                 <Link href="/resourceCenter">Resource Center</Link>
                             </Col>
                             <Col sm={4} className={classes.column}>
                                 <p className={`${classes.columnTitle} ${classes.teal}`}>Related Websites</p>
-                                <a
-                                    href="https://www.nih.gov/research-training/medical-research-initiatives/radx"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    RADx Initiative
+                                <a href="/" target="_blank" rel="noopener noreferrer">
+                                    Link
                                 </a>
-                                <a
-                                    href="https://www.nih.gov/research-training/medical-research-initiatives/radx/radx-programs"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    RADx Programs
+                                <a href="/" target="_blank" rel="noopener noreferrer">
+                                    Link
                                 </a>
-                                <a href="https://datascience.nih.gov/" target="_blank" rel="noopener noreferrer">
-                                    Office of Data Science Strategy
+                                <a href="/" target="_blank" rel="noopener noreferrer">
+                                    Link
                                 </a>
                                 <div>
-                                    <a href="https://clinicaltrials.gov/" target="_blank" rel="noopener noreferrer">
-                                        ClinicalTrials.gov
+                                    <a href="/" target="_blank" rel="noopener noreferrer">
+                                        Link
                                     </a>
                                     <ExternalLinkIcon />
                                 </div>
-                                <a href="https://www.ncbi.nlm.nih.gov/gap/" target="_blank" rel="noopener noreferrer">
-                                    dbGaP
+                                <a href="/" target="_blank" rel="noopener noreferrer">
+                                    Link
                                 </a>
                             </Col>
                             <Col sm={4} className={classes.column}>
                                 <p className={`${classes.columnTitle} ${classes.blue}`}>Website Policies</p>
-                                <a href={`${siteUrl}${GET_RESOURCE_CENTER_BUCKET}RADxDataHubCodeOfConduct.pdf`}>User Code of Conduct</a>
-                                <a href="https://www.nih.gov/accessibility" target="_blank" rel="noopener noreferrer">
-                                    Accessibility
+                                <a href="/" target="_blank" rel="noopener noreferrer">
+                                    Link
                                 </a>
-                                <a href="https://www.nih.gov/privacy-policy" target="_blank" rel="noopener noreferrer">
-                                    Privacy Policy
+                                <a href="/" target="_blank" rel="noopener noreferrer">
+                                    Link
                                 </a>
                                 <div>
-                                    <a
-                                        href="https://www.hhs.gov/vulnerability-disclosure-policy/index.html"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        HHS Vulnerability Disclosure
+                                    <a href="/" target="_blank" rel="noopener noreferrer">
+                                        Link
                                     </a>
                                     <ExternalLinkIcon />
                                 </div>
-                                <a href="https://www.nih.gov/disclaimers" target="_blank" rel="noopener noreferrer">
-                                    Disclaimers
-                                </a>
-                                <a href="https://www.edi.nih.gov/" target="_blank" rel="noopener noreferrer">
-                                    No Fear Act
-                                </a>
-                                <a
-                                    href="https://www.nih.gov/institutes-nih/nih-office-director/office-communications-public-liaison/freedom-information-act-office"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Freedom of Information Act
-                                </a>
                             </Col>
                         </Row>
                     </Container>
@@ -105,71 +78,23 @@ export default function Footer({ useColorfulVariant, siteUrl }) {
                     <Container className={classes.blackFooterContainer}>
                         <Row className={classes.govLinks}>
                             <Col className={classes.desktop}>
-                                <a
-                                    href="https://www.nih.gov/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="Link to National Institutes of Health"
-                                >
-                                    <img src="/images/nihLogo.png" alt="Link to National Institutes of Health" className={classes.nih} />
+                                <a href="" target="_blank" rel="noopener noreferrer" aria-label="Logo1">
+                                    Logo1
                                 </a>
                             </Col>
                             <Col className={classes.mobile}>
-                                <a
-                                    href="https://www.nih.gov/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="Link to National Institutes of Health"
-                                >
-                                    <img
-                                        src="/images/mobile_NIH_logo.png"
-                                        alt="Link to National Institutes of Health"
-                                        className={classes.nih}
-                                    />
-                                </a>
-                            </Col>
-                            <Col className={classes.desktop}>
-                                <a
-                                    href="https://www.hhs.gov/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="Link to U.S. Department of Health and Human Services"
-                                >
-                                    <HHSLogo />
-                                </a>
-                            </Col>
-                            <Col className={classes.mobile}>
-                                <a
-                                    href="https://www.hhs.gov/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="Link to U.S. Department of Health and Human Services"
-                                >
-                                    <img
-                                        src="/images/mobile_hhs_logo.png"
-                                        className={classes.hhs}
-                                        alt="Link to U.S. Department of Health and Human Services"
-                                    />
-                                </a>
-                            </Col>
-                            <Col>
-                                <a href="https://www.usa.gov/" target="_blank" rel="noopener noreferrer" aria-label="Link to UUSAGov">
-                                    <img src="/images/USAGOV_B&W.png" className={classes.usa} alt="Link to UUSAGov" />
+                                <a href="" target="_blank" rel="noopener noreferrer" aria-label="Logo2">
+                                    Logo2
                                 </a>
                             </Col>
                         </Row>
                         <Row className={classes.socialText}>
                             <div>Connect with Us:</div>
-                            <a
-                                href="https://www.youtube.com/@NIHRADxDataHub"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="Link to Youtube"
-                            >
+                            <a href="/" target="_blank" rel="noopener noreferrer" aria-label="Youtube">
                                 <YoutubeIcon />
                             </a>
                             <a
-                                href="http://eepurl.com/ifHHM9"
+                                href="/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={`px-2`}

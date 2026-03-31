@@ -12,6 +12,7 @@ export async function getServerSideProps(context) {
     return {
         props: {
             tutorialPage,
+            pageTitle: 'Tutorial',
         },
     };
 }

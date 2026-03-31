@@ -105,35 +105,42 @@ const ReviewSubmission = (props) => {
             /* eslint-disable-next-line react/prop-types */
             Cell: ({ row }) =>
                 /* eslint-disable-next-line react/prop-types */
-                row.depth === 0 ? (
+                row.canExpand && row.depth === 0 ? (
                     /* eslint-disable-next-line react/prop-types */
-                    <span {...row.getToggleRowExpandedProps({})}>
-                        <ClosedBundle />
+                    <div className={classes.row} {...row.getToggleRowExpandedProps({})}>
                         {/* eslint-disable-next-line react/prop-types */}
-                        {`  ${row.original.name} `}
-                        {
-                            /* eslint-disable-next-line react/prop-types */
-                            row.isExpanded ? <ChevronDown /> : <ChevronRight />
-                        }
-                    </span>
+                        <div className={classes.branchIcon}>{<ClosedBundle />}</div>
+                        {/* eslint-disable-next-line react/prop-types */}
+                        <div className={classes.fileName}>
+                            {row.original.name}{' '}
+                            {row.isExpanded ? <ChevronDown /> : <ChevronRight />}
+                        </div>
+                        {/* eslint-disable-next-line react/prop-types */}
+                    </div>
                 ) : (
-                    <span
+                    <div
                         /* eslint-disable-next-line react/prop-types */
                         {...row.getToggleRowExpandedProps({
                             style: {
                                 /* eslint-disable-next-line react/prop-types */
-                                marginLeft: `${row.depth * 3}rem`,
+                                marginLeft: `${row.depth * 1.5}rem`,
                             },
                         })}
                     >
-                        {/* eslint-disable-next-line react/prop-types */}
-                        <SubBranchIcon /> <PaperFile /> {row.original.name}{' '}
-                    </span>
-                ),
+                        <div className={classes.row}>
+                            <div className={classes.branchIcon} style={{ fontSize: '20px', color: '#437b83' }}>
+                                <SubBranchIcon />
+                            </div>{' '}
+                            <div className={classes.fileName}>
+                                {row.original.name}
+                            </div>
+                        </div>
+                    </div>
+                )
         },
         {
             id: 'category',
-            size: 250,
+            size: 150,
             Header: 'File Type',
             accessor: 'category',
         },

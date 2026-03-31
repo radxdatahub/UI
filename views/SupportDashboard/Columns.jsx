@@ -67,7 +67,7 @@ export const allSupportDashboard = [
     },
     {
         accessorKey: 'updateAt',
-        cell: (info) => dateFormatter(info.getValue()),
+        cell: (info) => (info.getValue() ? dateFormatter(info.getValue()) : 'N/A'),
         header: 'Last Modified At',
         size: 200,
         alignLeft: true,
@@ -81,7 +81,7 @@ export const allSupportDashboard = [
     },
     {
         accessorKey: 'resolvedAt',
-        cell: (info) => dateFormatter(info.getValue()),
+        cell: (info) => (info.getValue() ? dateFormatter(info.getValue()) : 'N/A'),
         header: 'Resolved At',
         size: 200,
         alignLeft: true,
@@ -148,10 +148,60 @@ export const inProgressSupportDashboard = [
         alignLeft: true,
     },
     {
-        accessorKey: 'status',
-        cell: (info) => toCamel(info.getValue()),
-        header: 'Status',
-        size: 140,
+        accessorKey: 'severity',
+        cell: (info) => info.getValue(),
+        header: 'Severity',
+        size: 130,
+        alignLeft: true,
+    },
+    {
+        accessorKey: 'fullName',
+        cell: (info) => info.getValue(),
+        header: 'Requestor Name',
+        size: 200,
+        alignLeft: true,
+    },
+    {
+        accessorKey: 'createdAt',
+        cell: (info) => dateFormatter(info.getValue()),
+        header: 'Created At',
+        size: 200,
+        alignLeft: true,
+    },
+    {
+        accessorKey: 'assignedAt',
+        cell: (info) => (info.getValue() ? dateFormatter(info.getValue()) : 'N/A'),
+        header: 'Assigned At',
+        size: 200,
+        alignLeft: true,
+    },
+    {
+        accessorKey: 'assigneeEmail',
+        cell: (info) => info.getValue(),
+        header: 'Assignee',
+        size: 200,
+        alignLeft: true,
+    },
+    {
+        accessorKey: 'updateAt',
+        cell: (info) => (info.getValue() ? dateFormatter(info.getValue()) : 'N/A'),
+        header: 'Last Modified At',
+        size: 200,
+        alignLeft: true,
+    },
+];
+
+export const resolvedSupportDashboard = [
+    {
+        accessorKey: 'id',
+        cell: (props) => {
+            return (
+                <Link href={`/supportDashboard/${props.getValue()}`} legacyBehavior>{`#${props.getValue()} - 
+                ${props?.row?.original?.requestTitle}`}</Link>
+            );
+        },
+        header: 'Id - Title',
+        size: 350,
         alignLeft: true,
     },
     {
@@ -191,71 +241,7 @@ export const inProgressSupportDashboard = [
     },
     {
         accessorKey: 'updateAt',
-        cell: (info) => dateFormatter(info.getValue()),
-        header: 'Last Modified At',
-        size: 200,
-        alignLeft: true,
-    },
-];
-
-export const resolvedSupportDashboard = [
-    {
-        accessorKey: 'id',
-        cell: (props) => {
-            return (
-                <Link href={`/supportDashboard/${props.getValue()}`} legacyBehavior>{`#${props.getValue()} - 
-                ${props?.row?.original?.requestTitle}`}</Link>
-            );
-        },
-        header: 'Id - Title',
-        size: 350,
-        alignLeft: true,
-    },
-    {
-        accessorKey: 'status',
-        cell: (info) => toCamel(info.getValue()),
-        header: 'Status',
-        size: 140,
-        alignLeft: true,
-    },
-    {
-        accessorKey: 'severity',
-        cell: (info) => info.getValue(),
-        header: 'Severity',
-        size: 130,
-        alignLeft: true,
-    },
-    {
-        accessorKey: 'fullName',
-        cell: (info) => info.getValue(),
-        header: 'Requestor Name',
-        size: 200,
-        alignLeft: true,
-    },
-    {
-        accessorKey: 'createdAt',
-        cell: (info) => dateFormatter(info.getValue()),
-        header: 'Created At',
-        size: 200,
-        alignLeft: true,
-    },
-    {
-        accessorKey: 'assignedAt',
-        cell: (info) => dateFormatter(info.getValue()),
-        header: 'Assigned At',
-        size: 200,
-        alignLeft: true,
-    },
-    {
-        accessorKey: 'assigneeEmail',
-        cell: (info) => info.getValue(),
-        header: 'Assignee',
-        size: 200,
-        alignLeft: true,
-    },
-    {
-        accessorKey: 'updateAt',
-        cell: (info) => dateFormatter(info.getValue()),
+        cell: (info) => (info.getValue() ? dateFormatter(info.getValue()) : 'N/A'),
         header: 'Last Modified At',
         size: 200,
         alignLeft: true,

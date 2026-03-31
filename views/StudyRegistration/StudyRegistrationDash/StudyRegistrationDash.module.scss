@@ -21,6 +21,11 @@
     color: #ff0000;
 }
 
+.disabled {
+    font-size: 21px;
+    color: #acacac;
+}
+
 .deleteIcon {
     color: #d90f0f;
     font-size: 20px;
@@ -72,4 +77,29 @@
     .sidebarTitle {
         margin-top: 0 !important;
     }
+}
+
+.deletion,
+.deletion:active,
+.deletion:focus {
+    color: #b12418;
+    font-size: 20px;
+    background-color: transparent !important;
+    width: auto !important;
+}
+
+.deletion:hover {
+    color: black;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: transparent !important;
+}
+
+.submitModalButton {
+    font: normal normal 500 16px/22px 'Open Sans Variable', sans-serif;
+    height: auto;
+}
+
+.link {
+    color: #0162f1;
 }

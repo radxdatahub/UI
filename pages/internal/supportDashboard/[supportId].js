@@ -3,6 +3,7 @@ import logger from '../../../lib/logger';
 import { GET_SUPPORT_REQUEST_BY_ID_INTERNAL, GET_ALL_SUPPORT_STATUSES } from '../../../constants/apiRoutes';
 import axios from 'axios';
 import { formatSnakeCase } from '../../../lib/componentHelpers/SupportFunctions/formatSnakeCase';
+import Cookies from 'js-cookie';
 
 const InternalSupportRequestPage = (props) => <InternalSupportRequestInfoPage {...props} />;
 
@@ -23,7 +24,16 @@ export async function getServerSideProps(context) {
         requestInfoById = getSupportRequestByIdResponse.data;
     } catch (e) {
         logger.error(e?.response?.data?.message || e?.response?.data?.detail || e);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
+            if (e?.response?.status === 401) {
+                Cookies.remove('chocolateChip');
+            }
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -49,7 +59,13 @@ export async function getServerSideProps(context) {
         });
     } catch (e) {
         logger.error(`Error with GET_ALL_SUPPORT_STATUSES: ${e?.response?.data?.message || e?.response?.data?.detail || e}`);
-        if ([400, 401, 403, 500].includes(e?.response?.status)) {
+        if ([404, 500].includes(e?.response?.status)) {
+            return {
+                redirect: {
+                    destination: `/${e?.response?.status}`,
+                },
+            };
+        } else if ([400, 401, 403].includes(e?.response?.status)) {
             return {
                 redirect: {
                     destination: `/?e=${e?.response?.status}`,
@@ -62,6 +78,7 @@ export async function getServerSideProps(context) {
         props: {
             requestInfoById,
             supportStatuses,
+            pageTitle: 'Support Request'
         },
     };
 }

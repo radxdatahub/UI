@@ -10,6 +10,7 @@ import {
     GET_INSTITUTIONS_TYPES,
     GET_USER_RAS_INFO,
     GET_INFO_BY_COOKIE,
+    GET_REFERRERS,
 } from '../../constants/apiRoutes';
 
 const UserRegistrationPage = (props) => <UserRegistration {...props} />;
@@ -25,6 +26,7 @@ export async function getServerSideProps(context) {
     const allStates = [];
     const allCountries = [];
     const institutionTypes = [];
+    const referrerTypes = [];
     let rasUser = {};
     let checkUser = false;
 
@@ -166,6 +168,21 @@ export async function getServerSideProps(context) {
         logger.error(`GET_INSTITUTIONS_TYPES call failed.  Error Message: ${e?.response?.data?.message || e?.response?.data?.detail || e}`);
     }
 
+    logger.info('Calling GET_REFERRERS with: %s', GET_REFERRERS);
+    try {
+        const getReferrersResponse = await axios.get(`${GET_REFERRERS}`, {
+            withCredentials: true,
+            headers: {
+                Cookie: req.headers.cookie,
+            },
+        });
+        getReferrersResponse.data.forEach((obj) => {
+            referrerTypes.push(obj);
+        });
+    } catch (e) {
+        logger.error(`GET_REFERRERS call failed.  Error Message: ${e?.response?.data?.message || e?.response?.data?.detail || e}`);
+    }
+
     return {
         props: {
             rasUser,
@@ -175,6 +192,8 @@ export async function getServerSideProps(context) {
             allCountries,
             institutionTypes,
             checkUser,
+            referrerTypes,
+            pageTitle: 'User Registration',
         },
     };
 }

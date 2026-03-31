@@ -20,6 +20,8 @@ import { useIdleTimer } from 'react-idle-timer';
 import { REFRESH_TOKEN, LOGOUT } from '../../constants/apiRoutes';
 import useRest from '../../lib/hooks/useRest';
 import { setUser } from '../../store/user/userSlice';
+import UserProfileModal from '../../views/UserProfile/UserProfileModal';
+import Link from 'next/link';
 
 /**
  * The base component for every page. The page's actual content is a child of this.
@@ -41,15 +43,30 @@ const CoreLayout = (props) => {
         GetUserProfile(props.userProfile, user);
     }
 
+    // Edit User Profile modal will open if a returning 1.0 user returns and does not have the required fields
+    const [userProfileVisible, setUserProfileVisible] = useState(false);
+
+    useEffect(() => {
+        if (cookie !== 'undefined' && cookie !== undefined && user && !router.pathname.startsWith('/postAuth')) {
+            if (!user.researcherLevel || !user.jobTitle || !user.institution) {
+                setUserProfileVisible(true);
+            }
+        }
+    }, [user]);
+
+    const closeUserProfileModal = () => {
+        setUserProfileVisible(false);
+    };
+
     /**
      * Idle Timer
      * Documentation: https://idletimer.dev/
      * Confirm Prompt: https://idletimer.dev/docs/features/confirm-prompt
      * Cross Tab Functionality: https://idletimer.dev/docs/features/cross-tab
      */
-    const THIRTYMINUTES = 30;
+    const TIMEOUTMINUTES = 29;
     const FIVEMINUTES = 5;
-    const timeout = 1_000 * 60 * THIRTYMINUTES; // total timeout in ms
+    const timeout = 1_000 * 60 * TIMEOUTMINUTES; // total timeout in ms
     const promptBeforeIdle = 1_000 * 60 * FIVEMINUTES; // time allotted inside modal in ms
     const [remaining, setRemaining] = useState(timeout);
     const [sessionModalVisible, setSessionModalVisible] = useState(false);
@@ -158,7 +175,7 @@ const CoreLayout = (props) => {
 
     // Nav Bar
     const NavParams = [
-        { name: 'Study Explorer', link: '/studyExplorer?&sort=asc&prop=title&page=1&size=50' },
+        { name: 'Study Explorer', link: '/studyExplorer/studies?&sort=asc&prop=title&page=1&size=50' },
         { name: 'Variables Catalog', link: '/variablesCatalog' },
         {
             name: 'Helpful Information',
@@ -167,16 +184,18 @@ const CoreLayout = (props) => {
                 { name: 'Resource Center', link: '/resourceCenter' },
                 { name: 'FAQs', link: '/faq' },
                 { name: 'User Tutorial', link: '/tutorial' },
+                { name: 'Events', link: '/events' },
+                { name: 'Funding Opportunities', link: '/fundingOpportunities' },
             ],
         },
-        { name: 'Contact Us', link: '/support' },
         {
             name: 'About',
             dropdown: [
                 { name: 'Overview', link: '/about' },
-                { name: 'News', link: '/news' },
-                { name: 'Events', link: '/events' },
-                { name: 'Funding Opportunities', link: '/fundingOpportunities' },
+                { name: 'Latest News & Updates', link: '/news' },
+                { name: 'Newsletters', link: '/newsletters' },
+                { name: 'User Advisory Board', link: '/userAdvisoryBoard' },
+                { name: 'Contact Us', link: '/contactUs' },
             ],
         },
     ];
@@ -210,8 +229,9 @@ const CoreLayout = (props) => {
     return (
         <div className={`${classes.coreLayout} ${noHexBkgd ? `${classes.noHexBkgd}` : ''}`}>
             <Head>
-                <title>NIH RADx Data Hub</title>
+                <title>{props.pageTitle ? `Site - ${props.pageTitle}` : `Site`}</title>
             </Head>
+            <a href="#main" className="skipLink" >Skip to main content</a>
             <div className={classes.container}>
                 {notifications &&
                 notifications.map((notification) => {
@@ -243,10 +263,17 @@ const CoreLayout = (props) => {
                 })}
                 <PageHeader {...props.children.props} userProfile={user} />
                 <NavBar tabList={NavParams} path={router.asPath} />
-                {props.children /* actual contents of page */}
+                <main id="main">
+                    {props.children /* actual contents of page */}
+                </main>
                 <Loading />
-                <Footer useColorfulVariant={useColorfulFooter} siteUrl={props.siteUrl}/>
+                <Footer useColorfulVariant={useColorfulFooter} baseUrl={props.baseUrl}/>
                 <SessionModal visible={sessionModalVisible} closeModal={closeModal} remainingTime={remaining} handleStillHere={handleStillHere} onIdle={onIdle}/>
+                <UserProfileModal
+                    visible={userProfileVisible}
+                    closeModal={closeUserProfileModal}
+                    userId={user?.id}
+                />
             </div>
         </div>
     );
@@ -254,6 +281,7 @@ const CoreLayout = (props) => {
 
 CoreLayout.propTypes = {
     children: PropTypes.node.isRequired,
+    pageTitle: PropTypes.string,
 };
 
 export default CoreLayout;

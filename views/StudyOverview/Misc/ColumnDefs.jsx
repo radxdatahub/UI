@@ -7,17 +7,21 @@ import Button from '../../../components/Button/Button';
 import ChevronDownIcon from '../../../components/Images/svg/ChevronDownIcon';
 import EyeballIcon from '../../../components/Images/svg/EyeballIcon';
 import { getFileSize } from '../../../lib/componentHelpers/TableFunctions/getFileSize';
-import { GET_DOCUMENT, GET_META_DICT_FILE, GET_METADATA } from '../../../constants/apiRoutes';
+import { GET_DOCUMENT, GET_META_DICT_FILE, GET_METADATA_DICT_CONTENT, TEST_DOWNLOAD } from '../../../constants/apiRoutes';
+import { downloadLink } from '../../../lib/pageHelpers/downloadLink';
+import { FiletypeJson, FiletypeYml, JournalArrowDown } from 'react-bootstrap-icons';
+import Link from 'next/link';
 
 /**
  * Study Overview Study Documents Table Column Definitions
  * @property {String} studyId - ID of study
  * @property {String} baseUrl - base url for download link
+ * @property {Function} restGet - REST API to download
  * @returns {Array} Table column array for Tanstack React tables
  */
 
 // STUDY DOCUMENTS TABLE
-export const documentsTable = (studyId, baseUrl) => {
+export const documentsTable = (studyId, baseUrl, restGet) => {
     return [
         {
             id: 'document',
@@ -49,14 +53,19 @@ export const documentsTable = (studyId, baseUrl) => {
                 const fileId = info.getValue();
                 return (
                     <Tooltip id="downloadTooltip" title="Download Document">
-                        <a href={`${baseUrl}${GET_DOCUMENT.replace('[fileID]', fileId).replace('[studyID]', studyId)}`} download>
+                        <a>
                             <Button
                                 className={classes.downloadIcon}
                                 ariaLabel="Download Document"
                                 variant="icon"
                                 iconCenter={<DownloadIcon width="30" height="30" />}
                                 size="icon"
-                                handleClick={() => {}}
+                                handleClick={async () => {
+                                    downloadLink(
+                                        `${baseUrl}${GET_DOCUMENT.replace('[fileID]', fileId).replace('[studyID]', studyId)}`,
+                                        restGet
+                                    );
+                                }}
                             ></Button>
                         </a>
                     </Tooltip>
@@ -76,12 +85,12 @@ documentsTable.PropTypes = {
  * @property {String} baseUrl - base url for download link
  * @property {Function} setMetadataModalVisible - function to open metadata visualizer modal
  * @property {Function} setMetadataFile - function to set metadata file for metadata visualizer modal
- * @property {Function} restGet - bring in hook to get metadata file content for metadata viewer
+ * @property {Function} restGet - REST api to download and get metadata file content for metadata viewer
  * @returns {Array} Table column array for Tanstack React tables
  */
 
 // STUDY DATASETS TABLE
-export const datasetsTable = (baseUrl, setMetadataModalVisible, setMetadataFile, restGet) => {
+export const datasetsTable = (baseUrl, setMetadataModalVisible, setMetadataFile, setDictModalVisible, setDictFile, restGet) => {
     return [
         {
             id: 'sourceFileName',
@@ -140,12 +149,12 @@ export const datasetsTable = (baseUrl, setMetadataModalVisible, setMetadataFile,
             accessorKey: 'metadataFileId',
             cell: (info) => {
                 const fileId = info.getValue();
-                const fileExtension = info.row.original.metadataFileName?.split('.')[1];
+                const fileExtension = info.row.original.metadataFileName?.split('.') || [];
                 const fileSize = getFileSize(info.row.original.metadataFileSize, 0);
-                let metadataFile, metadataViewerIcon, downloadIcon;
+                let metadataFile, metadataViewerIcon, downloadIcon, downloadIconYaml;
 
                 const getMeta = async () => {
-                    const metaResponse = await restGet(`${GET_METADATA}${fileId}`, {
+                    const metaResponse = await restGet(`${GET_METADATA_DICT_CONTENT}${fileId}`, {
                         showLoading: true,
                         errorMessage: 'Error with viewing metadata file',
                     });
@@ -156,7 +165,7 @@ export const datasetsTable = (baseUrl, setMetadataModalVisible, setMetadataFile,
                     }
                 };
 
-                if (fileExtension == 'json') {
+                if (fileExtension[fileExtension.length - 1] === 'json') {
                     metadataViewerIcon = (
                         <Tooltip id="downloadTooltip" title={`Visualize Metadata File`}>
                             <a>
@@ -176,14 +185,33 @@ export const datasetsTable = (baseUrl, setMetadataModalVisible, setMetadataFile,
                 }
                 if (fileId) {
                     downloadIcon = (
-                        <Tooltip id="downloadTooltip" title={`Download Metadata File (${fileSize})`}>
-                            <a href={`${baseUrl}${GET_META_DICT_FILE}${fileId}`} download>
+                        <Tooltip id="downloadTooltip" title={`Download Metadata File (JSON) (${fileSize})`}>
+                            <a>
                                 <Button
                                     className={classes.downloadIcon}
-                                    ariaLabel={`Download Metadata File (${fileSize})`}
+                                    ariaLabel={`Download Metadata File (JSON) (${fileSize})`}
                                     variant="icon"
-                                    iconCenter={<DownloadIcon width="30" height="30" />}
+                                    iconCenter={<FiletypeJson width="30" height="30" />}
                                     size="icon"
+                                    handleClick={async () => {
+                                        downloadLink(`${baseUrl}${GET_META_DICT_FILE}${fileId}&yaml=false`, restGet);
+                                    }}
+                                ></Button>
+                            </a>
+                        </Tooltip>
+                    );
+                    downloadIconYaml = (
+                        <Tooltip id="downloadTooltip" title={`Download Metadata File (YAML) (${fileSize})`}>
+                            <a>
+                                <Button
+                                    className={classes.downloadIcon}
+                                    ariaLabel={`Download Metadata File (YAML) (${fileSize})`}
+                                    variant="icon"
+                                    iconCenter={<FiletypeYml width="30" height="30" />}
+                                    size="icon"
+                                    handleClick={async () => {
+                                        downloadLink(`${baseUrl}${GET_META_DICT_FILE}${fileId}&yaml=true`, restGet);
+                                    }}
                                 ></Button>
                             </a>
                         </Tooltip>
@@ -194,12 +222,13 @@ export const datasetsTable = (baseUrl, setMetadataModalVisible, setMetadataFile,
                     <>
                         {metadataViewerIcon}
                         {downloadIcon}
+                        {downloadIconYaml}
                         {!metadataViewerIcon && !downloadIcon && <p aria-label="No metadata file"></p>}
                     </>
                 );
             },
             header: 'Metadata',
-            size: 140,
+            size: 170,
         },
         {
             id: 'dictionaryFileId',
@@ -207,26 +236,66 @@ export const datasetsTable = (baseUrl, setMetadataModalVisible, setMetadataFile,
             cell: (info) => {
                 const fileId = info.getValue();
                 const fileSize = getFileSize(info.row.original.dictionaryFileSize, 0);
+                let dictFile, dictViewerIcon, downloadIcon;
+
+                const getDict = async () => {
+                    const dictResponse = await restGet(`${GET_METADATA_DICT_CONTENT}${fileId}`, {
+                        showLoading: true,
+                        errorMessage: 'Error with viewing data dictionary file',
+                    });
+                    if (dictResponse.status === 200) {
+                        dictFile = dictResponse.data.data;
+                        setDictModalVisible(true);
+                        setDictFile(dictFile);
+                    }
+                };
+
                 if (fileId) {
-                    return (
-                        <Tooltip id="downloadTooltip" title={`Download Dictionary File (${fileSize})`}>
-                            <a href={`${baseUrl}${GET_META_DICT_FILE}${fileId}`} download>
+                    dictViewerIcon = (
+                        <Tooltip id="downloadTooltip" title={`Visualize Data Dictionary File`}>
+                            <a>
                                 <Button
-                                    className={classes.downloadIcon}
-                                    ariaLabel={`Download Dictionary File (${fileSize})`}
+                                    className={classes.eyeball}
+                                    ariaLabel={`Visualize Data Dictionary File`}
                                     variant="icon"
-                                    iconCenter={<DownloadIcon width="30" height="30" />}
+                                    iconCenter={<EyeballIcon />}
                                     size="icon"
+                                    handleClick={() => {
+                                        getDict();
+                                    }}
                                 ></Button>
                             </a>
                         </Tooltip>
                     );
-                } else {
-                    return <p aria-label="No dictionary file"></p>;
+
+                    downloadIcon = (
+                        <Tooltip id="downloadTooltip" title={`Download Dictionary File (${fileSize})`}>
+                            <a>
+                                <Button
+                                    className={classes.downloadIcon}
+                                    ariaLabel={`Download Dictionary File (${fileSize})`}
+                                    variant="icon"
+                                    iconCenter={<JournalArrowDown width="30" height="30" />}
+                                    size="icon"
+                                    handleClick={async () => {
+                                        downloadLink(`${baseUrl}${GET_META_DICT_FILE}${fileId}`, restGet);
+                                    }}
+                                ></Button>
+                            </a>
+                        </Tooltip>
+                    );
                 }
+
+                return (
+                    <>
+                        {dictViewerIcon}
+                        {downloadIcon}
+                        {!dictViewerIcon && !downloadIcon && <p aria-label="No dictionary file"></p>}
+                    </>
+                );
             },
             header: 'Dictionary',
-            size: 145,
+            size: 130,
         },
     ];
 };
@@ -246,5 +315,42 @@ export const variablesSubTable = [
         cell: (info) => info.getValue().replace(/,/g, ', ').replace(/;/g, ', '),
         removeSort: true,
         alignLeft: true,
+    },
+];
+
+// Variables Information Table
+export const variablesInformationTable = [
+    {
+        id: 'variableName',
+        accessorKey: 'variableName',
+        cell: (props) => {
+            if (props.row.original.hasOverview) {
+                return (
+                    <Link href={`/variable/${props.row.original.variableId}`} legacyBehavior>
+                        {<a className={classes.variableLink}>{props.getValue()}</a>}
+                    </Link>
+                );
+            } else {
+                return props.getValue();
+            }
+        },
+        header: 'Variable Name',
+        alignLeft: true,
+        size: 180,
+    },
+    {
+        id: 'variableLabel',
+        accessorKey: 'variableLabel',
+        cell: (info) => {
+            if (info.getValue()) {
+                return info.getValue();
+            } else {
+                return '-';
+            }
+        },
+        header: 'Label',
+        alignLeft: true,
+        removeSort: true,
+        size: 300,
     },
 ];
